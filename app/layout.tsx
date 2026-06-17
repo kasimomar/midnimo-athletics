@@ -15,8 +15,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Scrollytelling Portfolio",
-  description: "Scroll-driven image sequence portfolio built with Next.js and Framer Motion.",
+  title: "Midnimo Athletics",
+  description: "Youth athletic development through soccer, coaching, and community. Weekend league for ages 6–13 and after-school programs at Iftin Charter School.",
 };
 
 export default function RootLayout({
