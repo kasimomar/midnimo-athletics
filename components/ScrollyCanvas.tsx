@@ -4,8 +4,7 @@ import { useRef } from "react";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 import Overlay from "./Overlay";
 
-const CLIP =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3F9mthO95UxkdumE6T8rY5O8i22/hf_20260617_012821_70588436-37bf-4bf9-bebf-fdd9f5c6b32b.mp4";
+import { publicConfig } from "@/lib/public-config";
 
 export default function ScrollyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,14 +24,18 @@ export default function ScrollyCanvas() {
   return (
     <section ref={containerRef} className="relative h-[200vh] bg-ink">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {publicConfig.heroVideoUrl ? (
         <video
-          src={CLIP}
+          src={publicConfig.heroVideoUrl}
           autoPlay
           muted
           loop
           playsInline
           className="absolute inset-0 h-full w-full object-cover"
         />
+        ) : (
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-ink via-accent/20 to-clay/20" />
+        )}
 
         {/* Dark veil */}
         <motion.div

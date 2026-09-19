@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_4gM7sKgDT7RL7dk1KRdby00";
-const SHEET_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbzG5trxDt6ZEiQxp8mySh6k9O2-Im6q4Vw5mvmqeA9fSA1KZWukLfE8-FHW76lO4Glh/exec";
+import { publicConfig, registrationEnabled } from "@/lib/public-config";
 
 const AGES = ["6", "7", "8", "9", "10", "11", "12", "13"];
 
@@ -14,13 +12,14 @@ export default function SignUp() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitting || !publicConfig.registrationEndpoint || !publicConfig.stripePaymentUrl) return;
     setSubmitting(true);
 
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
 
     try {
-      await fetch(SHEET_ENDPOINT, {
+      await fetch(publicConfig.registrationEndpoint, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
@@ -30,7 +29,7 @@ export default function SignUp() {
       // Sheet logging is best-effort; continue to payment regardless.
     }
 
-    window.location.href = STRIPE_PAYMENT_LINK;
+    window.location.href = publicConfig.stripePaymentUrl;
   }
 
   return (
@@ -61,16 +60,24 @@ export default function SignUp() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md md:p-10"
           >
+            {!registrationEnabled && (
+              <p role="status" className="mb-6 text-sm text-paper/70">
+                Online registration is temporarily unavailable. Please <a href="#contact" className="text-accent underline">contact us</a> to register.
+              </p>
+            )}
+            <fieldset disabled={!registrationEnabled || submitting}>
+            <legend className="sr-only">Athlete registration</legend>
             <div className="grid gap-5 md:grid-cols-2">
               <Field label="Parent / Guardian Name" name="parentName" type="text" required />
               <Field label="Email Address" name="email" type="email" required />
               <Field label="Phone Number" name="phone" type="tel" required />
               <Field label="Athlete Full Name" name="athleteName" type="text" required />
               <div className="flex flex-col gap-2">
-                <label className="font-body text-xs uppercase tracking-widest text-paper/60">
+                <label htmlFor="athlete-age" className="font-body text-xs uppercase tracking-widest text-paper/60">
                   Athlete Age
                 </label>
                 <select
+                  id="athlete-age"
                   name="age"
                   required
                   defaultValue=""
@@ -99,15 +106,18 @@ export default function SignUp() {
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !registrationEnabled}
               className="mt-8 w-full rounded-full bg-accent py-3.5 font-body text-sm uppercase tracking-widest text-ink transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(111,161,94,0.35)] disabled:opacity-60"
             >
-              {submitting ? "Redirecting…" : "Continue to Payment"}
+              {!registrationEnabled ? "Registration unavailable" : submitting ? "Redirecting…" : "Continue to Payment"}
             </button>
+            </fieldset>
+            {registrationEnabled && (
             <p className="mt-4 text-xs text-paper/45">
               After submitting, you&apos;ll be directed to our secure payment page
               to set up your $70/month subscription.
             </p>
+            )}
           </motion.form>
 
           <motion.aside
@@ -136,14 +146,16 @@ export default function SignUp() {
                 </li>
               ))}
             </ul>
+            {registrationEnabled && (
             <a
-              href={STRIPE_PAYMENT_LINK}
+              href={publicConfig.stripePaymentUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-clay py-3.5 text-center font-body text-sm uppercase tracking-widest text-clay transition-all duration-300 hover:bg-clay hover:text-ink hover:shadow-[0_8px_30px_rgba(194,136,79,0.35)]"
             >
               Pay with Stripe
             </a>
+            )}
             <p className="text-xs text-paper/45">
               Have questions about billing or need a payment plan?{" "}
               <a href="#contact" className="text-accent underline-offset-4 hover:underline">
@@ -171,10 +183,11 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-body text-xs uppercase tracking-widest text-paper/60">
+      <label htmlFor={name} className="font-body text-xs uppercase tracking-widest text-paper/60">
         {label}
       </label>
       <input
+        id={name}
         type={type}
         name={name}
         required={required}
