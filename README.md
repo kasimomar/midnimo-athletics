@@ -1,71 +1,119 @@
-# Scrollytelling Portfolio
+# Midnimo Athletics
 
-A high-end, scroll-driven portfolio built with Next.js 14 (App Router),
-TypeScript, Tailwind CSS, and Framer Motion. The core mechanic is a
-scroll-scrubbed HTML5 Canvas image sequence with parallax text overlay.
+A responsive website for a youth athletics program, helping families explore soccer and school programs, register an athlete, and reach the organizers. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
 
-## Stack
+## Features
 
-- **Next.js 14** (App Router)
-- **TypeScript**
-- **Tailwind CSS**
-- **Framer Motion** for scroll-linked animation
-- **HTML5 Canvas** for the image sequence (not video)
+- Weekend Youth Soccer League for ages 6–13, with the site's advertised $70 monthly membership.
+- After-school athletic development and summer-program information for the Iftin Charter School partnership.
+- Responsive desktop/mobile navigation, scroll-linked hero animation, and animated program cards.
+- Athlete-registration form with an optional Google Apps Script integration and Stripe hosted checkout link.
+- About and news sections, plus a contact form that opens the visitor's email application.
+- A gradient hero and disabled online registration when external integrations are unconfigured.
 
-## Getting Started
+## Screenshots
+
+Real local-browser captures of the default, unconfigured build. No real registrations or payments were submitted.
+
+![Desktop home page with the gradient hero](docs/screenshots/hero-desktop.png)
+![Desktop program information](docs/screenshots/programs-desktop.png)
+
+<p>
+  <img src="docs/screenshots/hero-mobile.png" alt="Mobile home page" width="260" />
+  <img src="docs/screenshots/registration-mobile.png" alt="Mobile registration section in the unconfigured state" width="260" />
+</p>
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Layout[app/layout.tsx: metadata, fonts, global styles] --> Page[app/page.tsx: page composition]
+    Page --> Sections[Client components: navigation, hero, programs, about, news]
+    Page --> Signup[SignUp: registration form]
+    Page --> Contact[Contact: mailto form]
+    Config[Public build-time environment variables] --> Hero[ScrollyCanvas: video or gradient]
+    Config --> Signup
+    Signup -->|best-effort no-CORS POST| Script[External Google Apps Script]
+    Signup -->|browser redirect| Stripe[External Stripe Payment Link]
+    Contact --> Email[Visitor email application]
+```
+
+The App Router root page composes client components for animation and browser interactions. Despite its inherited name, `ScrollyCanvas.tsx` renders an HTML **video**, not a canvas or image sequence. Framer Motion tracks a 200vh section to animate its overlay. The site has no application database, authentication, API routes, or payment webhook in this repository.
+
+```text
+app/                    Root page, layout, metadata, and global CSS
+components/             Navigation, hero, programs, signup, about, news, contact
+lib/public-config.ts    Validated public integration URLs
+public/images/          Brand logo
+public/sequence/        Legacy starter documentation; not used by the current hero
+docs/configuration.md   Environment variables and integration limitations
+docs/screenshots/      Desktop and mobile browser captures
+```
+
+`Projects.tsx` is also an unused starter component; it is not rendered by `app/page.tsx`.
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Application | Next.js 16 App Router, React 19 |
+| Language | TypeScript with strict checking |
+| Styling | Tailwind CSS 3, PostCSS, CSS custom properties |
+| Animation | Framer Motion 13 |
+| Typography | Fraunces and Inter through `next/font/google` |
+| Integrations | Google Apps Script web app, Stripe Payment Links, `mailto:` |
+| Tooling | npm lockfile, ESLint, TypeScript, GitHub Actions |
+
+Exact dependency versions are recorded in `package-lock.json`.
+
+## Local setup
+
+Use Node.js 24 and npm. Install from the committed lockfile:
 
 ```bash
-npm install
+git clone https://github.com/kasimomar/midnimo-athletics.git
+cd midnimo-athletics
+npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [localhost:3000](http://localhost:3000). The default blank environment values let you explore the site without contacting registration or payment services. Optional URLs must be HTTPS; see [configuration and migration instructions](docs/configuration.md).
 
-## Structure
+Production build and local preview:
 
-```
-app/
-  layout.tsx      Root layout, fonts (Fraunces + Inter), global styles
-  page.tsx         Composes ScrollyCanvas + Projects
-  globals.css      Tailwind layers + base styles
-components/
-  ScrollyCanvas.tsx  500vh scroll track, sticky canvas, frame scrubbing
-  Overlay.tsx        Parallax title (z-10) over the canvas
-  Projects.tsx       Glassmorphism project grid
-public/
-  sequence/          Drop your 89 WebP frames here (see README inside)
+```bash
+npm run build
+npm start
 ```
 
-## How the scroll-scrubbing works
+Google Fonts are downloaded during the build, so the build environment needs network access. Public environment values are embedded at build time; rebuild after changing deployment settings. Never place secrets in `NEXT_PUBLIC_*` variables.
 
-1. `ScrollyCanvas` wraps a `500vh` section with a `sticky top-0 h-screen`
-   canvas inside it.
-2. `useScroll` (Framer Motion) tracks scroll progress (`0` to `1`)
-   across that 500vh section.
-3. `useTransform` maps that progress to a frame index (`0` to `88`).
-4. On every scroll-driven change, the matching preloaded image is drawn
-   to the canvas using a manual `object-fit: cover`-style crop so it
-   always fills the viewport, on any screen size.
+## Quality checks and contribution workflow
 
-## Overlay parallax keyframes
+GitHub Actions runs dependency auditing and these checks on pull requests and pushes to main:
 
-`Overlay.tsx` maps scroll progress to horizontal position:
+```bash
+npm audit --audit-level=high
+npm run lint
+npm run typecheck
+npm run build
+```
 
-| Scroll progress | Position |
-| ---------------- | -------- |
-| 0%   | centered |
-| 30%  | drifts left |
-| 60%  | drifts right (then holds, fading out) |
+Track each improvement with an issue, create a focused branch, and open a pull request referencing `Closes #<issue>`. Include relevant checks and screenshots for visible changes. Review deployment configuration before merging integration changes.
 
-## Adding your image sequence
+## Current limitations
 
-See `public/sequence/README.md` — drop in `frame_0000.webp` through
-`frame_0088.webp` (zero-padded, 4 digits).
+- Registration uses an opaque `no-cors` request. It cannot confirm that the external sheet stored an athlete's information, and the existing flow continues to payment after a network error.
+- Stripe checkout and registration are not reconciled. There is no webhook or verified payment/registration state.
+- Contact opens `mailto:`; it does not send server-side email. News items are static placeholder updates.
+- Content, schedule, and pricing are maintained in code. Verify them with the organization before publication.
 
-## Notes
+## Future improvements
 
-- This project lives alongside the existing Midnimo Athletics static
-  site in the parent folder — the two are independent and won't
-  conflict (separate `package.json`, no shared dependencies).
-- Adjust `FRAME_COUNT` in `ScrollyCanvas.tsx` if your sequence has a
-  different number of frames.
+1. Replace best-effort registration with a validated server API, confirmed persistence, idempotent retries, and clear error recovery.
+2. Reconcile Stripe webhooks with registrations and provide a verified confirmation flow.
+3. Audit keyboard navigation, form labels, color contrast, and reduced-motion behavior; replace the time-based loading overlay with a less intrusive experience.
+4. Add repeatable browser tests for navigation, registration configuration, and mocked checkout; run accessibility checks in CI.
+5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
+6. Keep dependencies patched and remove unused starter components/documentation when appropriate.
