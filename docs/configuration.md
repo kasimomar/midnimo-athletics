@@ -17,10 +17,12 @@ Blank, malformed, non-HTTPS, and credential-bearing URLs are treated as unconfig
 3. Rebuild and verify the configured state before deploying. A build without integration variables intentionally disables registration.
 4. Use synthetic data and a mocked endpoint for local browser testing. Never submit real athlete details as a test.
 
+The current deployment preserves the site's existing Stripe **test** link. Moving it into an environment variable does not enable live billing. A verified live payment link is still needed before accepting real payments. Preview builds can leave the registration and payment variables blank to disable submissions while the site is reviewed.
+
 ## Existing integration limits
 
 The browser sends JSON via `fetch` with `mode: "no-cors"`. Responses are opaque: a resolved request does **not** prove the registration was stored. Network errors are caught and the existing flow still continues to payment. This repository has no registration backend, payment webhook, or association between payment status and registration. The Apps Script implementation is maintained outside this repository.
 
 A future server-side registration API should validate input, return confirmed persistence, handle retry/idempotency, and reconcile Stripe webhooks before displaying a registration success message. The contact form opens the visitor's email application via `mailto:`; it does not send email itself.
 
-Reference: [Next.js environment variables](https://nextjs.org/docs/14/app/building-your-application/configuring/environment-variables).
+Reference: [Next.js environment variables](https://nextjs.org/docs/app/guides/environment-variables).
