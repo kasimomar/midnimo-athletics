@@ -56,15 +56,15 @@ docs/screenshots/      Desktop and mobile browser captures
 
 | Layer | Technology |
 | --- | --- |
-| Application | Next.js 14 App Router, React 18 |
+| Application | Next.js 16 App Router, React 19 |
 | Language | TypeScript with strict checking |
 | Styling | Tailwind CSS 3, PostCSS, CSS custom properties |
-| Animation | Framer Motion 11 |
+| Animation | Framer Motion 13 |
 | Typography | Fraunces and Inter through `next/font/google` |
 | Integrations | Google Apps Script web app, Stripe Payment Links, `mailto:` |
-| Tooling | npm lockfile; ESLint, TypeScript, and GitHub Actions in the CI improvement |
+| Tooling | npm lockfile, ESLint, TypeScript, GitHub Actions |
 
-Exact dependency versions are recorded in `package-lock.json`. A separate security patch and CI improvement are tracked in [issue #4](https://github.com/kasimomar/midnimo-athletics/issues/4) and [issue #2](https://github.com/kasimomar/midnimo-athletics/issues/2).
+Exact dependency versions are recorded in `package-lock.json`.
 
 ## Local setup
 
@@ -91,9 +91,10 @@ Google Fonts are downloaded during the build, so the build environment needs net
 
 ## Quality checks and contribution workflow
 
-The [CI pull request](https://github.com/kasimomar/midnimo-athletics/pull/5) adds these commands and runs them on pull requests and main pushes:
+GitHub Actions runs dependency auditing and these checks on pull requests and pushes to main:
 
 ```bash
+npm audit --audit-level=high
 npm run lint
 npm run typecheck
 npm run build
@@ -115,4 +116,4 @@ Track each improvement with an issue, create a focused branch, and open a pull r
 3. Audit keyboard navigation, form labels, color contrast, and reduced-motion behavior; replace the time-based loading overlay with a less intrusive experience.
 4. Add repeatable browser tests for navigation, registration configuration, and mocked checkout; run accessibility checks in CI.
 5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
-6. Keep dependencies patched and plan a supported Next.js upgrade; remove unused starter components/documentation when appropriate.
+6. Keep dependencies patched and remove unused starter components/documentation when appropriate.
