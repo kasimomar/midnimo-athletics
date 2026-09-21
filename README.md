@@ -100,6 +100,18 @@ npm run typecheck
 npm run build
 ```
 
+Browser checks run against a fresh local production build on port 3100:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+E2E_MODE=configured npm run test:e2e
+```
+
+The default run checks blank integration settings; the second checks configured settings. Both cover desktop and mobile Chromium. The runner overrides public integration variables, mocks registration and checkout, and blocks unexpected outbound browser requests, so local `.env` values cannot send test registrations to real services. Run the two modes sequentially because each builds into `.next`. Builds still require access to Google Fonts.
+
+CI runs both modes and saves screenshots, traces, and the HTML report on failure for seven days. To inspect a local report, run `npx playwright show-report`. These checks verify the browser flow; they do not prove that the external registration service stores data or that Stripe processes payments. See the [Playwright web-server guide](https://playwright.dev/docs/test-webserver) for the runner configuration.
+
 Track each improvement with an issue, create a focused branch, and open a pull request referencing `Closes #<issue>`. Include relevant checks and screenshots for visible changes. Review deployment configuration before merging integration changes.
 
 ## Current limitations
@@ -114,6 +126,6 @@ Track each improvement with an issue, create a focused branch, and open a pull r
 1. Replace best-effort registration with a validated server API, confirmed persistence, idempotent retries, and clear error recovery.
 2. Reconcile Stripe webhooks with registrations and provide a verified confirmation flow.
 3. Audit keyboard navigation, form labels, color contrast, and reduced-motion behavior; replace the time-based loading overlay with a less intrusive experience.
-4. Add repeatable browser tests for navigation, registration configuration, and mocked checkout; run accessibility checks in CI.
+4. Extend browser coverage with accessibility checks and additional browser engines.
 5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
 6. Keep dependencies patched and remove unused starter components/documentation when appropriate.
