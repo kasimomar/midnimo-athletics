@@ -14,3 +14,7 @@ out/
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+
+# Browser test artifacts
+playwright-report/
+test-results/
