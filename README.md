@@ -7,6 +7,7 @@ A responsive website for a youth athletics program, helping families explore soc
 - Weekend Youth Soccer League for ages 6–13, with the site's advertised $70 monthly membership.
 - After-school athletic development and summer-program information for the Iftin Charter School partnership.
 - Responsive desktop/mobile navigation, scroll-linked hero animation, and animated program cards.
+- Mobile navigation exposes its expanded state, supports Tab and Escape, and closes when focus leaves or the layout switches to desktop.
 - Athlete-registration form with an optional Google Apps Script integration and Stripe hosted checkout link.
 - About and news sections, plus a contact form that opens the visitor's email application.
 - A gradient hero and disabled online registration when external integrations are unconfigured.
