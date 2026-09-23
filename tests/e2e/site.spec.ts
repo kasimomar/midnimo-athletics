@@ -49,6 +49,71 @@ test("visitors can navigate to registration without horizontal overflow", async 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test.describe("mobile navigation", () => {
+  test.beforeEach(async ({ isMobile }) => {
+    test.skip(!isMobile, "The disclosure is only available at mobile widths");
+  });
+
+  test("supports keyboard toggling and Escape with focus restoration", async ({ page }) => {
+    const toggle = page.getByRole("button", { name: "Toggle menu" });
+    const panel = page.locator("#mobile-navigation");
+    await expect(toggle).toHaveAttribute("aria-controls", "mobile-navigation");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(panel).toBeHidden();
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await page.keyboard.press("Tab");
+    await expect(panel.getByRole("link", { name: "Programs", exact: true })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+    await expect(toggle).toBeFocused();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await page.keyboard.press("Space");
+    await expect(panel).toBeVisible();
+    await page.keyboard.press("Space");
+    await expect(panel).toBeHidden();
+    await page.keyboard.press("Tab");
+    expect(await panel.evaluate(element => element.contains(document.activeElement))).toBe(false);
+  });
+
+  test("closes when focus leaves and when a link is activated", async ({ page }) => {
+    const toggle = page.getByRole("button", { name: "Toggle menu" });
+    const panel = page.locator("#mobile-navigation");
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    for (const name of ["Programs", "Sign Up", "About", "News", "Contact"]) {
+      await page.keyboard.press("Tab");
+      await expect(panel.getByRole("link", { name, exact: true })).toBeFocused();
+    }
+    await page.keyboard.press("Tab");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(await page.locator("header").evaluate(element => element.contains(document.activeElement))).toBe(false);
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(`${baseURL}/#signup`);
+    await expect(panel).toBeHidden();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(await panel.evaluate(element => element.contains(document.activeElement))).toBe(false);
+  });
+
+  test("resets the open panel across the desktop breakpoint", async ({ page }) => {
+    const toggle = page.getByRole("button", { name: "Toggle menu", includeHidden: true });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await page.setViewportSize({ width: 1024, height: 800 });
+    await expect(toggle).toBeHidden();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(page.getByRole("navigation", { name: "Primary", exact: true })).toBeVisible();
+    await page.setViewportSize({ width: 393, height: 851 });
+    await expect(toggle).toBeVisible();
+    await expect(page.locator("#mobile-navigation")).toBeHidden();
+  });
+});
+
 if (!configured) {
   test("missing configuration disables registration and offers contact", async ({ page, network }) => {
     await expect(page.locator("video")).toHaveCount(0);
