@@ -3,8 +3,9 @@
 import { motion, MotionValue, useTransform } from "framer-motion";
 
 interface OverlayProps {
-  /** 0 -> 1 scroll progress through the parent's 500vh track */
+  /** 0 -> 1 scroll progress through the hero track */
   progress: MotionValue<number>;
+  reducedMotion: boolean;
 }
 
 /**
@@ -15,7 +16,7 @@ interface OverlayProps {
  *  - 50%  scroll -> fully swiped off-screen to the left
  *  - 100% scroll -> stays off-screen, hidden
  */
-export default function Overlay({ progress }: OverlayProps) {
+export default function Overlay({ progress, reducedMotion }: OverlayProps) {
   const x = useTransform(
     progress,
     [0, 0.5],
@@ -39,21 +40,21 @@ export default function Overlay({ progress }: OverlayProps) {
   return (
     <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6">
       <motion.p
-        style={{ opacity: subtitleOpacity }}
+        style={{ opacity: reducedMotion ? 1 : subtitleOpacity }}
         className="mb-4 font-body text-xs uppercase tracking-[0.3em] text-clay"
       >
         Coaching, character &amp; community
       </motion.p>
 
       <motion.h1
-        style={{ x, opacity, scale }}
+        style={reducedMotion ? { x: 0, opacity: 1, scale: 1 } : { x, opacity, scale }}
         className="font-display text-[14vw] font-semibold leading-none tracking-tight text-paper md:text-[9vw]"
       >
         Midnimo<br className="md:hidden" /> <span className="text-accent">Athletics</span>
       </motion.h1>
 
       <motion.p
-        style={{ opacity: subtitleOpacity }}
+        style={{ opacity: reducedMotion ? 1 : subtitleOpacity }}
         className="mt-6 font-body text-sm uppercase tracking-[0.25em] text-paper/60"
       >
         Est. Youth Athletic Development

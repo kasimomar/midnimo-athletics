@@ -5,9 +5,11 @@ import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 import Overlay from "./Overlay";
 
 import { publicConfig } from "@/lib/public-config";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 export default function ScrollyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -22,9 +24,9 @@ export default function ScrollyCanvas() {
   );
 
   return (
-    <section ref={containerRef} className="relative h-[200vh] bg-ink">
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {publicConfig.heroVideoUrl ? (
+    <section ref={containerRef} className="relative h-[200vh] bg-ink motion-reduce:h-screen">
+      <div className="sticky top-0 h-screen w-full overflow-hidden motion-reduce:relative">
+        {publicConfig.heroVideoUrl && !reducedMotion ? (
         <video
           src={publicConfig.heroVideoUrl}
           autoPlay
@@ -39,12 +41,12 @@ export default function ScrollyCanvas() {
 
         {/* Dark veil */}
         <motion.div
-          style={{ opacity: veilOpacity }}
+          style={{ opacity: reducedMotion ? 0.45 : veilOpacity }}
           className="pointer-events-none absolute inset-0 bg-ink"
         />
 
         {/* Parallax title */}
-        <Overlay progress={scrollYProgress} />
+        <Overlay progress={scrollYProgress} reducedMotion={reducedMotion} />
       </div>
     </section>
   );

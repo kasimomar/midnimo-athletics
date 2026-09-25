@@ -7,6 +7,7 @@ A responsive website for a youth athletics program, helping families explore soc
 - Weekend Youth Soccer League for ages 6–13, with the site's advertised $70 monthly membership.
 - After-school athletic development and summer-program information for the Iftin Charter School partnership.
 - Responsive desktop/mobile navigation, scroll-linked hero animation, and animated program cards.
+- The hero uses a static background and readable, stationary text when reduced motion is requested, including preference changes while the page is open. The timed loading splash has been removed.
 - Mobile navigation exposes its expanded state, supports Tab and Escape, and closes when focus leaves or the layout switches to desktop.
 - Athlete-registration form with an optional Google Apps Script integration and Stripe hosted checkout link.
 - About and news sections, plus a contact form that opens the visitor's email application.
@@ -126,7 +127,7 @@ Track each improvement with an issue, create a focused branch, and open a pull r
 
 1. Replace best-effort registration with a validated server API, confirmed persistence, idempotent retries, and clear error recovery.
 2. Reconcile Stripe webhooks with registrations and provide a verified confirmation flow.
-3. Audit keyboard navigation, form labels, color contrast, and reduced-motion behavior; replace the time-based loading overlay with a less intrusive experience.
+3. Audit screen-reader navigation, form labels, and color contrast; extend reduced-motion support to section entrance and hover animations beyond the hero.
 4. Extend browser coverage with accessibility checks and additional browser engines.
 5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
 6. Keep dependencies patched and remove unused starter components/documentation when appropriate.
