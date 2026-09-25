@@ -8,7 +8,6 @@ interface Program {
   meta: string;
   description: string;
   bullets: string[];
-  price?: string;
   note?: string;
   cta?: { label: string; href: string };
 }
@@ -16,29 +15,28 @@ interface Program {
 const PROGRAMS: Program[] = [
   {
     letter: "A",
-    title: "Weekend Youth Soccer League",
+    title: "Community Weekend Soccer",
     meta: "Friday – Sunday / Weekly / Ages 6–13",
     description:
-      "Our flagship weekend program gives young players of every age group a place to train, compete, and grow. Athletes are placed on teams organized by age range, with dedicated coaching focused on fundamentals, teamwork, and fun.",
+      "Our weekend soccer program brings young people together to play, practice movement skills, and build connections. Age-group teams give participants opportunities to learn soccer fundamentals, enjoy teamwork, and grow in confidence.",
     bullets: [
       "Multiple teams across all age ranges, 6–13",
       "Skill-building drills, scrimmages, and friendly matches",
-      "Experienced coaching staff focused on growth and sportsmanship",
+      "Coaching focused on participation, growth, and sportsmanship",
       "Sessions held Friday through Sunday, every week",
     ],
-    price: "$70 / month per athlete",
-    cta: { label: "Sign Up & Pay Monthly", href: "#signup" },
+    cta: { label: "Ask About Weekend Soccer", href: "#signup" },
   },
   {
     letter: "B",
     title: "Iftin Charter School — After-School Program",
     meta: "Monday – Friday / 4:00–6:00 PM",
     description:
-      "In partnership with Iftin Charter School, Midnimo Athletics runs a five-day-a-week after-school program focused on holistic athletic development. Students get exposure to a variety of sports, building physical literacy, teamwork, discipline, and confidence.",
+      "Our after-school program at Iftin Charter School gives students opportunities to explore sports and movement together. Activities focus on developing skills, enjoying teamwork, and building confidence through participation.",
     bullets: [
       "Multi-sport development for all skill levels",
       "Daily structured activities, Monday through Friday",
-      "Focus on fitness, teamwork, leadership, and sportsmanship",
+      "Opportunities to practice teamwork and sportsmanship",
       "Offered in partnership with Iftin Charter School",
     ],
   },
@@ -47,7 +45,7 @@ const PROGRAMS: Program[] = [
     title: "Summer Program",
     meta: "Iftin Charter School / Full-Day",
     description:
-      "During the summer, this program expands into a full-day enrichment experience — combining sports, skill-building, and team activities to keep students active and engaged during the break.",
+      "Our summer program at Iftin Charter School combines sports, movement, and group activities in a full-day setting. It gives students opportunities to stay active, explore skills, and connect with others during the break.",
     bullets: [],
     note: "Enrollment for the Iftin Charter School programs is arranged directly through the school as part of our partnership agreement.",
   },
@@ -74,10 +72,10 @@ export default function Programs() {
           className="mb-16 flex flex-col gap-4 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between"
         >
           <h2 className="font-display text-4xl font-semibold text-paper md:text-6xl">
-            Programs
+            Community Programs
           </h2>
           <p className="max-w-sm text-sm text-paper/60">
-            Training, development, and community — on the weekend and after school.
+            Sports and movement that bring young people together — on the weekend and after school.
           </p>
         </motion.div>
 
@@ -126,21 +124,14 @@ export default function Programs() {
                     <p className="mt-5 text-sm italic text-paper/50">{program.note}</p>
                   )}
 
-                  {(program.price || program.cta) && (
+                  {program.cta && (
                     <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-white/10 pt-6">
-                      {program.price && (
-                        <span className="font-display text-2xl font-semibold text-paper">
-                          {program.price}
-                        </span>
-                      )}
-                      {program.cta && (
                         <a
                           href={program.cta.href}
                           className="rounded-full border border-accent px-6 py-2.5 font-body text-sm uppercase tracking-widest text-accent transition-all duration-300 hover:bg-accent hover:text-ink hover:shadow-[0_0_24px_rgba(111,161,94,0.35)]"
                         >
                           {program.cta.label}
                         </a>
-                      )}
                     </div>
                   )}
                 </div>

@@ -1,28 +1,25 @@
 # Deployment configuration
 
-Copy `.env.example` to `.env.local` for local development. Set the same variables in the deployment platform before building. Restart the dev server or rebuild/redeploy after changing them: Next.js embeds `NEXT_PUBLIC_*` values into browser bundles at build time. These values are **public**, never API keys or passwords.
+Copy `.env.example` to `.env.local` for local development. Next.js embeds `NEXT_PUBLIC_*` values into browser bundles at build time, so rebuild after changing them. These values are **public**, never credentials.
 
 | Variable | Purpose | When absent or invalid |
 | --- | --- | --- |
-| `NEXT_PUBLIC_HERO_VIDEO_URL` | HTTPS URL of the background MP4 | Gradient hero |
-| `NEXT_PUBLIC_REGISTRATION_ENDPOINT` | HTTPS Google Apps Script web-app endpoint accepting the registration JSON | Registration disabled |
-| `NEXT_PUBLIC_STRIPE_PAYMENT_URL` | HTTPS Stripe hosted payment link | Registration disabled |
+| `NEXT_PUBLIC_HERO_VIDEO_URL` | Optional HTTPS background-video URL | Gradient hero |
 
-Blank, malformed, non-HTTPS, and credential-bearing URLs are treated as unconfigured. Registration fields, submit action, and payment link require both registration/payment URLs. Contact remains available.
+Blank, malformed, non-HTTPS, and credential-bearing URLs are treated as unconfigured. Reduced-motion visitors receive the static gradient even when a video URL is configured. The browser checks the visitor's preference before adding the video.
 
-## Migration checklist
+## Program inquiries and contact
 
-1. Configure the video URL and your own Apps Script endpoint in each environment.
-2. Configure a Stripe **test** payment link in development/preview, and the intended live link in production. URL validation does not determine whether Stripe is in live mode; verify this in Stripe.
-3. Rebuild and verify the configured state before deploying. A build without integration variables intentionally disables registration.
-4. Use synthetic data and a mocked endpoint for local browser testing. Never submit real athlete details as a test.
+The organization-provided email is `admin@midnimoathletics.com`, defined once in `lib/contact.ts`. Program-interest links open the visitor's email app. The contact form prepares an encoded email draft, then offers an explicit **Open Email App** link. Visitors review and send from their own email service. Editing the form clears an outdated draft.
 
-The current deployment preserves the site's existing Stripe **test** link. Moving it into an environment variable does not enable live billing. A verified live payment link is still needed before accepting real payments. Preview builds can leave the registration and payment variables blank to disable submissions while the site is reviewed.
+The website does not send email, confirm delivery, store inquiries, or confirm enrollment. Visitors without a configured email app can copy the displayed address and message into their email service. No diagnosis or athlete records are collected in the initial program-interest section.
 
-## Existing integration limits
+## Migration from the former checkout flow
 
-The browser sends JSON via `fetch` with `mode: "no-cors"`. Responses are opaque: a resolved request does **not** prove the registration was stored. Network errors are caught and the existing flow still continues to payment. This repository has no registration backend, payment webhook, or association between payment status and registration. The Apps Script implementation is maintained outside this repository.
+The nonprofit community-program update removes the old registration form, no-CORS submission, monthly-billing agreement, price panel, and Stripe redirect/link. `NEXT_PUBLIC_REGISTRATION_ENDPOINT` and `NEXT_PUBLIC_STRIPE_PAYMENT_URL` are no longer read by the application. Remove those unused deployment variables after the new version is deployed; retain the hero-video setting.
 
-A future server-side registration API should validate input, return confirmed persistence, handle retry/idempotency, and reconcile Stripe webhooks before displaying a registration success message. The contact form opens the visitor's email application via `mailto:`; it does not send email itself.
+Removing website checkout does not change existing subscriptions, external registration records, or the organization's current participation costs. Families are directed to the team for availability, participation details, and any costs before enrolling. The website does not claim that programs are free or already grant-funded.
+
+Browser tests run with and without video configuration. The configured fixture also supplies retired integration variables to ensure that stale deployment settings cannot restore the checkout flow. Unexpected outbound requests and all registration/payment requests are blocked and fail the tests. Email drafts are inspected without opening an email client or sending a message.
 
 Reference: [Next.js environment variables](https://nextjs.org/docs/app/guides/environment-variables).

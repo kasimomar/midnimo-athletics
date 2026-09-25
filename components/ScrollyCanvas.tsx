@@ -24,8 +24,8 @@ export default function ScrollyCanvas() {
   );
 
   return (
-    <section ref={containerRef} className="relative h-[200vh] bg-ink motion-reduce:h-screen">
-      <div className="sticky top-0 h-screen w-full overflow-hidden motion-reduce:relative">
+    <section ref={containerRef} className="relative h-[200vh] bg-ink motion-reduce:h-auto">
+      <div className="sticky top-0 min-h-screen w-full overflow-hidden motion-reduce:relative">
         {publicConfig.heroVideoUrl && !reducedMotion ? (
         <video
           src={publicConfig.heroVideoUrl}
