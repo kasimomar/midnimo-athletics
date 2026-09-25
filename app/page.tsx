@@ -1,4 +1,3 @@
-import LoadingScreen from "@/components/LoadingScreen";
 import Nav from "@/components/Nav";
 import ScrollyCanvas from "@/components/ScrollyCanvas";
 import Programs from "@/components/Programs";
@@ -11,7 +10,6 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="bg-ink">
-      <LoadingScreen />
       <Nav />
       <div id="home">
         <ScrollyCanvas />

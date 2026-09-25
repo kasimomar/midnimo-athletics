@@ -1,11 +1,11 @@
 import { test as base, expect } from "@playwright/test";
 import { baseURL, configured, integrationURLs } from "./settings";
 
-type NetworkLog = { submissions: unknown[] };
+type NetworkLog = { submissions: unknown[]; mediaRequests: number };
 
 const test = base.extend<{ network: NetworkLog }>({
   network: [async ({ context, page }, use) => {
-    const network: NetworkLog = { submissions: [] };
+    const network: NetworkLog = { submissions: [], mediaRequests: 0 };
     const unexpected: string[] = [];
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
@@ -19,6 +19,7 @@ const test = base.extend<{ network: NetworkLog }>({
       } else if (url === integrationURLs.checkout && method === "GET") {
         await route.fulfill({ contentType: "text/html", body: "<h1>Mock checkout</h1>" });
       } else if (url === integrationURLs.hero && method === "GET") {
+        network.mediaRequests += 1;
         await route.fulfill({ status: 204 });
       } else if (new URL(url).origin === baseURL && ["GET", "HEAD"].includes(method)) {
         await route.continue();
@@ -35,7 +36,7 @@ const test = base.extend<{ network: NetworkLog }>({
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByText("Loading…", { exact: true })).toBeHidden();
+  await expect(page.getByText("Loading…", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Midnimo");
 });
 
@@ -111,6 +112,38 @@ test.describe("mobile navigation", () => {
     await page.setViewportSize({ width: 393, height: 851 });
     await expect(toggle).toBeVisible();
     await expect(page.locator("#mobile-navigation")).toBeHidden();
+  });
+});
+
+test.describe("reduced-motion hero", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("shows a static hero without requesting video or hiding the title on scroll", async ({ page, network }) => {
+    const title = page.getByRole("heading", { level: 1 });
+    await expect(page.locator("video")).toHaveCount(0);
+    await expect(page.getByText("Coaching, character & community", { exact: true })).toHaveCSS("opacity", "1");
+    expect(network.mediaRequests).toBe(0);
+    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
+    expect(await page.locator("#home").evaluate(element => element.clientHeight === innerHeight)).toBe(true);
+    await page.evaluate(() => window.scrollTo(0, 200));
+    await expect(title).toHaveCSS("opacity", "1");
+    await expect(title).toHaveCSS("transform", "none");
+    await expect(page.locator("header")).toHaveCSS("transition-duration", "0s");
+  });
+
+  test("responds to motion preference changes without reloading", async ({ page }) => {
+    const title = page.getByRole("heading", { level: 1 });
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+    await expect(page.locator("video")).toHaveCount(configured ? 1 : 0);
+    if (configured) await expect(page.locator("video")).toHaveAttribute("autoplay", "");
+    await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
+    await expect(title).not.toHaveCSS("transform", "none");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expect(page.locator("video")).toHaveCount(0);
+    await expect(title).toHaveCSS("transform", "none");
+    await expect(title).toHaveCSS("opacity", "1");
+    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
   });
 });
 
