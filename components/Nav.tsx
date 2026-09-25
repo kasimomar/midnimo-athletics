@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const LINKS = [
   { href: "#programs", label: "Programs" },
-  { href: "#signup", label: "Sign Up" },
+  { href: "#signup", label: "Program Interest" },
   { href: "#about", label: "About" },
   { href: "#news", label: "News" },
   { href: "#contact", label: "Contact" },
@@ -67,12 +67,12 @@ export default function Nav() {
           </span>
         </a>
 
-        <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-4 md:flex lg:gap-8">
           {LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="font-body text-sm uppercase tracking-widest text-paper/70 transition-colors duration-300 hover:text-accent"
+              className="font-body text-xs uppercase tracking-widest text-paper/70 transition-colors duration-300 hover:text-accent lg:text-sm"
             >
               {link.label}
             </a>

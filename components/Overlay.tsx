@@ -31,34 +31,36 @@ export default function Overlay({ progress, reducedMotion }: OverlayProps) {
 
   const scale = useTransform(progress, [0, 0.5], [1, 1.08]);
 
-  const subtitleOpacity = useTransform(
-    progress,
-    [0, 0.05, 0.2, 0.3],
-    [0, 1, 1, 0]
-  );
-
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6">
-      <motion.p
-        style={{ opacity: reducedMotion ? 1 : subtitleOpacity }}
-        className="mb-4 font-body text-xs uppercase tracking-[0.3em] text-clay"
+    <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 pb-10 pt-24 text-center">
+      <p
+        className="mb-5 font-body text-xs uppercase tracking-[0.2em] text-clay md:text-sm"
       >
-        Coaching, character &amp; community
-      </motion.p>
+        Midnimo Athletics · A nonprofit for youth
+      </p>
 
       <motion.h1
         style={reducedMotion ? { x: 0, opacity: 1, scale: 1 } : { x, opacity, scale }}
-        className="font-display text-[14vw] font-semibold leading-none tracking-tight text-paper md:text-[9vw]"
+        className="max-w-5xl font-display text-[clamp(2.75rem,7vw,6.5rem)] font-semibold leading-[1.05] tracking-tight text-paper"
       >
-        Midnimo<br className="md:hidden" /> <span className="text-accent">Athletics</span>
+        A place to play,<br />
+        move, and <span className="text-accent">belong.</span>
       </motion.h1>
 
-      <motion.p
-        style={{ opacity: reducedMotion ? 1 : subtitleOpacity }}
-        className="mt-6 font-body text-sm uppercase tracking-[0.25em] text-paper/60"
+      <p
+        className="mt-6 max-w-2xl font-body text-base leading-relaxed text-paper/80 md:text-lg"
       >
-        Est. Youth Athletic Development
-      </motion.p>
+        We bring young people together through sports, movement, and community.
+        All youth are welcome to explore, build confidence, and connect with others.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="#programs" className="rounded-full bg-accent px-6 py-3 font-body text-sm font-medium text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper">
+          Explore Programs
+        </a>
+        <a href="#contact" className="rounded-full border border-paper/50 px-6 py-3 font-body text-sm font-medium text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper">
+          Talk With Our Team
+        </a>
+      </div>
     </div>
   );
 }

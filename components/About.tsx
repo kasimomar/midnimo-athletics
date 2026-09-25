@@ -5,18 +5,18 @@ import { motion } from "framer-motion";
 const PILLARS = [
   {
     num: "01",
-    title: "Safety First",
-    body: "Every session is run with player safety and well-being as the top priority.",
+    title: "Movement & Play",
+    body: "Opportunities to explore sports, practice movement skills, and enjoy being active.",
   },
   {
     num: "02",
-    title: "Skill Development",
-    body: "Age-appropriate training that builds fundamentals and confidence.",
+    title: "Confidence & Growth",
+    body: "Encouraging young people to try, learn, and build confidence through participation.",
   },
   {
     num: "03",
-    title: "Community",
-    body: "A welcoming environment where every athlete and family belongs.",
+    title: "Community & Belonging",
+    body: "Bringing youth with different abilities and experiences together through sport.",
   },
 ];
 
@@ -32,7 +32,7 @@ export default function About() {
           className="mb-16 border-b border-white/10 pb-8"
         >
           <h2 className="font-display text-4xl font-semibold text-paper md:text-6xl">
-            About
+            Our Mission
           </h2>
         </motion.div>
 
@@ -45,16 +45,20 @@ export default function About() {
             className="flex flex-col gap-5 font-body text-base leading-relaxed text-paper/70 md:text-lg"
           >
             <p>
-              Midnimo Athletics is dedicated to youth development through sport.
-              We believe athletics is one of the most powerful tools for teaching
-              discipline, teamwork, confidence, and healthy habits that last a
-              lifetime.
+              Midnimo Athletics is a nonprofit organization. Our mission is to
+              create a safe, welcoming place for all young people to play sports,
+              explore movement, build confidence, and find community.
             </p>
             <p>
-              From our weekend soccer league for kids ages 6–13 to our
-              partnership with Iftin Charter School providing daily after-school
-              and summer athletic development, our coaches are committed to
-              helping every athlete grow — on and off the field.
+              Youth with autism are already part of our programs, and welcoming
+              them is part of our team&apos;s everyday experience. We welcome youth
+              with different abilities and encourage families to speak with us
+              about their child&apos;s interests and participation needs.
+            </p>
+            <p>
+              Through weekend soccer and school-based programs, we bring young
+              people together to practice skills, share experiences, and enjoy
+              being active with others.
             </p>
           </motion.div>
 

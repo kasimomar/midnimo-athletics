@@ -1,7 +1,7 @@
 import Nav from "@/components/Nav";
 import ScrollyCanvas from "@/components/ScrollyCanvas";
 import Programs from "@/components/Programs";
-import SignUp from "@/components/SignUp";
+import ProgramInterest from "@/components/ProgramInterest";
 import About from "@/components/About";
 import News from "@/components/News";
 import Contact from "@/components/Contact";
@@ -15,7 +15,7 @@ export default function Home() {
         <ScrollyCanvas />
       </div>
       <Programs />
-      <SignUp />
+      <ProgramInterest />
       <About />
       <News />
       <Contact />

@@ -1,11 +1,11 @@
 import { test as base, expect } from "@playwright/test";
 import { baseURL, configured, integrationURLs } from "./settings";
 
-type NetworkLog = { submissions: unknown[]; mediaRequests: number };
+type NetworkLog = { mediaRequests: number };
 
 const test = base.extend<{ network: NetworkLog }>({
   network: [async ({ context, page }, use) => {
-    const network: NetworkLog = { submissions: [], mediaRequests: 0 };
+    const network: NetworkLog = { mediaRequests: 0 };
     const unexpected: string[] = [];
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
@@ -13,12 +13,7 @@ const test = base.extend<{ network: NetworkLog }>({
       const request = route.request();
       const url = request.url();
       const method = request.method();
-      if (url === integrationURLs.registration && method === "POST") {
-        network.submissions.push(request.postDataJSON());
-        await route.fulfill({ status: 200, body: "ok" });
-      } else if (url === integrationURLs.checkout && method === "GET") {
-        await route.fulfill({ contentType: "text/html", body: "<h1>Mock checkout</h1>" });
-      } else if (url === integrationURLs.hero && method === "GET") {
+      if (url === integrationURLs.hero && method === "GET") {
         network.mediaRequests += 1;
         await route.fulfill({ status: 204 });
       } else if (new URL(url).origin === baseURL && ["GET", "HEAD"].includes(method)) {
@@ -37,16 +32,16 @@ const test = base.extend<{ network: NetworkLog }>({
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("Loading…", { exact: true })).toHaveCount(0);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Midnimo");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("A place to play,");
 });
 
-test("visitors can navigate to registration without horizontal overflow", async ({ page, isMobile }) => {
+test("visitors can navigate to program interest without horizontal overflow", async ({ page, isMobile }) => {
   const menu = page.getByRole("button", { name: "Toggle menu" });
   if (isMobile) await menu.click();
-  await page.getByRole("link", { name: "Sign Up", exact: true }).click();
+  await page.getByRole("link", { name: "Program Interest", exact: true }).click();
   await expect(page).toHaveURL(`${baseURL}/#signup`);
-  await expect(page.getByRole("heading", { name: "Register & Pay" })).toBeVisible();
-  if (isMobile) await expect(page.getByRole("link", { name: "Sign Up", exact: true })).toBeHidden();
+  await expect(page.getByRole("heading", { name: "Program Interest" })).toBeVisible();
+  if (isMobile) await expect(page.getByRole("link", { name: "Program Interest", exact: true })).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
@@ -83,7 +78,7 @@ test.describe("mobile navigation", () => {
     const panel = page.locator("#mobile-navigation");
     await toggle.focus();
     await page.keyboard.press("Enter");
-    for (const name of ["Programs", "Sign Up", "About", "News", "Contact"]) {
+    for (const name of ["Programs", "Program Interest", "About", "News", "Contact"]) {
       await page.keyboard.press("Tab");
       await expect(panel.getByRole("link", { name, exact: true })).toBeFocused();
     }
@@ -121,7 +116,7 @@ test.describe("reduced-motion hero", () => {
   test("shows a static hero without requesting video or hiding the title on scroll", async ({ page, network }) => {
     const title = page.getByRole("heading", { level: 1 });
     await expect(page.locator("video")).toHaveCount(0);
-    await expect(page.getByText("Coaching, character & community", { exact: true })).toHaveCSS("opacity", "1");
+    await expect(page.getByText("Midnimo Athletics · A nonprofit for youth", { exact: true })).toHaveCSS("opacity", "1");
     expect(network.mediaRequests).toBe(0);
     await expect(page.locator("html")).toHaveCSS("scroll-behavior", "auto");
     expect(await page.locator("#home").evaluate(element => element.clientHeight === innerHeight)).toBe(true);
@@ -147,40 +142,71 @@ test.describe("reduced-motion hero", () => {
   });
 });
 
-if (!configured) {
-  test("missing configuration disables registration and offers contact", async ({ page, network }) => {
-    await expect(page.locator("video")).toHaveCount(0);
-    await expect(page.getByLabel("Athlete Full Name")).toBeDisabled();
-    await expect(page.getByRole("button", { name: "Registration unavailable" })).toBeDisabled();
-    await expect(page.getByRole("link", { name: "Pay with Stripe", exact: true })).toHaveCount(0);
-    await page.getByRole("status").getByRole("link", { name: "contact us" }).click();
-    await expect(page).toHaveURL(`${baseURL}/#contact`);
-    expect(network.submissions).toEqual([]);
-  });
-} else {
-  test("required fields prevent an empty submission", async ({ page, network }) => {
-    await page.getByRole("button", { name: "Continue to Payment", exact: true }).click();
-    await expect(page.getByLabel("Parent / Guardian Name")).toBeFocused();
-    await expect(page).toHaveURL(`${baseURL}/`);
-    expect(network.submissions).toEqual([]);
-  });
 
-  test("registration sends the entered fields once and opens mocked checkout", async ({ page, network }) => {
-    await expect(page.locator("video")).toHaveAttribute("src", integrationURLs.hero);
-    await expect(page.getByRole("link", { name: "Pay with Stripe", exact: true })).toHaveAttribute("href", integrationURLs.checkout);
-    await page.getByLabel("Parent / Guardian Name").fill("Test Parent");
-    await page.getByLabel("Email Address").fill("test@example.com");
-    await page.getByLabel("Phone Number").fill("202-555-0100");
-    await page.getByLabel("Athlete Full Name").fill("Test Athlete");
-    await page.getByLabel("Athlete Age").selectOption("8");
-    await page.getByLabel("Emergency Contact").fill("Test Contact");
-    await page.getByRole("checkbox").check();
-    await page.getByRole("button", { name: "Continue to Payment", exact: true }).click();
-    await expect(page).toHaveURL(integrationURLs.checkout);
-    await expect(page.getByRole("heading", { name: "Mock checkout" })).toBeVisible();
-    expect(network.submissions).toEqual([{
-      parentName: "Test Parent", email: "test@example.com", phone: "202-555-0100",
-      athleteName: "Test Athlete", age: "8", emergencyContact: "Test Contact",
-    }]);
-  });
-}
+test("hero actions lead to programs and the contact section", async ({ page }) => {
+  await page.getByRole("link", { name: "Explore Programs", exact: true }).click();
+  await expect(page).toHaveURL(`${baseURL}/#programs`);
+  await expect(page.getByRole("heading", { name: "Community Programs", exact: true })).toBeVisible();
+  await page.goto("/");
+  await page.getByRole("link", { name: "Talk With Our Team", exact: true }).click();
+  await expect(page).toHaveURL(`${baseURL}/#contact`);
+  await expect(page.getByLabel("Name", { exact: true })).toBeVisible();
+});
+
+test("contact and program interest fit a narrow phone screen", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.getByRole("link", { name: "Talk With Our Team", exact: true }).click();
+  await expect(page.getByLabel("Name", { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test("program interest offers the admin email without checkout or athlete collection", async ({ page }) => {
+  const interest = page.getByRole("region", { name: "Program Interest" });
+  await expect(interest.getByRole("link", { name: "Email About a Program" })).toHaveAttribute(
+    "href", "mailto:admin@midnimoathletics.com?subject=Program%20inquiry%20%E2%80%94%20Midnimo%20Athletics",
+  );
+  await expect(interest).toContainText("any costs before enrolling");
+  await expect(page.getByText(/\$70|Register & Pay|monthly billing|Pay with Stripe/)).toHaveCount(0);
+  await expect(page.locator('a[href*="stripe"], a[href*="checkout.example.test"]')).toHaveCount(0);
+  await expect(page.locator('input[name="athleteName"], input[name="emergencyContact"]')).toHaveCount(0);
+  await interest.getByRole("link", { name: "Prepare a message for our team" }).click();
+  await expect(page).toHaveURL(`${baseURL}/#contact`);
+  await expect(page.getByRole("link", { name: "admin@midnimoathletics.com", exact: true })).toHaveAttribute("href", "mailto:admin@midnimoathletics.com");
+  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(2);
+  if (configured) await expect(page.locator("video")).toHaveAttribute("src", integrationURLs.hero);
+  else await expect(page.locator("video")).toHaveCount(0);
+});
+
+test("contact requires valid details before preparing a draft", async ({ page }) => {
+  await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
+  await expect(page.getByLabel("Name", { exact: true })).toBeFocused();
+  await expect(page.getByRole("link", { name: "Open Email App" })).toHaveCount(0);
+  await page.getByLabel("Name", { exact: true }).fill("Test Parent");
+  await page.getByLabel("Email", { exact: true }).fill("not-an-email");
+  await page.getByLabel("Message", { exact: true }).fill("Program question");
+  await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
+  await expect(page.getByLabel("Email", { exact: true })).toBeFocused();
+  await expect(page.getByRole("link", { name: "Open Email App" })).toHaveCount(0);
+});
+
+test("contact prepares an encoded email draft and invalidates it after editing", async ({ page }) => {
+  const name = "Test & Family";
+  const email = "test+family@example.com";
+  const message = "Soccer & movement?\nWhat are the next steps #1 — thank you.";
+  await page.getByLabel("Name", { exact: true }).fill(name);
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.getByLabel("Message", { exact: true }).fill(message);
+  await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Your draft is ready. Nothing has been sent.");
+  const draft = page.getByRole("link", { name: "Open Email App", exact: true });
+  const href = new URL((await draft.getAttribute("href"))!);
+  expect(href.protocol).toBe("mailto:");
+  expect(href.pathname).toBe("admin@midnimoathletics.com");
+  expect(href.searchParams.get("subject")).toBe(`Message from ${name}`);
+  expect(href.searchParams.get("body")).toBe(`${message}\n\nFrom: ${name} (${email})`);
+  // Inspect the draft only; never open an email client or send a test message.
+  await page.getByLabel("Message", { exact: true }).fill("Updated program question");
+  await expect(draft).toHaveCount(0);
+  await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
+  expect(new URL((await draft.getAttribute("href"))!).searchParams.get("body")).toContain("Updated program question");
+});

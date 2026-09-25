@@ -1,28 +1,28 @@
 # Midnimo Athletics
 
-A responsive website for a youth athletics program, helping families explore soccer and school programs, register an athlete, and reach the organizers. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
+A responsive website for Midnimo Athletics, a nonprofit welcoming all youth through sports, movement, and community. Families can explore soccer and school programs, learn about the mission, and contact the team about participation. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
 
 ## Features
 
-- Weekend Youth Soccer League for ages 6–13, with the site's advertised $70 monthly membership.
+- Community Weekend Soccer for ages 6–13, with a program-interest route to discuss participation with the team.
 - After-school athletic development and summer-program information for the Iftin Charter School partnership.
 - Responsive desktop/mobile navigation, scroll-linked hero animation, and animated program cards.
 - The hero uses a static background and readable, stationary text when reduced motion is requested, including preference changes while the page is open. The timed loading splash has been removed.
 - Mobile navigation exposes its expanded state, supports Tab and Escape, and closes when focus leaves or the layout switches to desktop.
-- Athlete-registration form with an optional Google Apps Script integration and Stripe hosted checkout link.
-- About and news sections, plus a contact form that opens the visitor's email application.
-- A gradient hero and disabled online registration when external integrations are unconfigured.
+- A nonprofit mission centered on a safe, welcoming place for all youth, including youth with autism already participating in the programs.
+- Program inquiries and contact at `admin@midnimoathletics.com`; the contact form prepares an email draft for the visitor to review and send from their own email app.
+- A gradient hero when video is unconfigured. Contact works independently of video settings; there is no online checkout or athlete-registration submission.
 
 ## Screenshots
 
-Real local-browser captures of the default, unconfigured build. No real registrations or payments were submitted.
+Real browser captures of the nonprofit update with the gradient hero. No messages, registrations, or payments were submitted.
 
 ![Desktop home page with the gradient hero](docs/screenshots/hero-desktop.png)
 ![Desktop program information](docs/screenshots/programs-desktop.png)
 
 <p>
   <img src="docs/screenshots/hero-mobile.png" alt="Mobile home page" width="260" />
-  <img src="docs/screenshots/registration-mobile.png" alt="Mobile registration section in the unconfigured state" width="260" />
+  <img src="docs/screenshots/interest-mobile.png" alt="Mobile community program interest section" width="260" />
 </p>
 
 ## Architecture
@@ -31,21 +31,20 @@ Real local-browser captures of the default, unconfigured build. No real registra
 flowchart TD
     Layout[app/layout.tsx: metadata, fonts, global styles] --> Page[app/page.tsx: page composition]
     Page --> Sections[Client components: navigation, hero, programs, about, news]
-    Page --> Signup[SignUp: registration form]
-    Page --> Contact[Contact: mailto form]
+    Page --> Interest[ProgramInterest: email inquiry]
+    Page --> Contact[Contact: email draft preparation]
     Config[Public build-time environment variables] --> Hero[ScrollyCanvas: video or gradient]
-    Config --> Signup
-    Signup -->|best-effort no-CORS POST| Script[External Google Apps Script]
-    Signup -->|browser redirect| Stripe[External Stripe Payment Link]
-    Contact --> Email[Visitor email application]
+    Interest --> Email[Visitor email application]
+    Contact --> Email
 ```
 
 The App Router root page composes client components for animation and browser interactions. Despite its inherited name, `ScrollyCanvas.tsx` renders an HTML **video**, not a canvas or image sequence. Framer Motion tracks a 200vh section to animate its overlay. The site has no application database, authentication, API routes, or payment webhook in this repository.
 
 ```text
 app/                    Root page, layout, metadata, and global CSS
-components/             Navigation, hero, programs, signup, about, news, contact
-lib/public-config.ts    Validated public integration URLs
+components/             Navigation, hero, programs, interest, about, news, contact
+lib/public-config.ts    Validated public hero-video URL
+lib/contact.ts          Organization email and draft-link generation
 public/images/          Brand logo
 public/sequence/        Legacy starter documentation; not used by the current hero
 docs/configuration.md   Environment variables and integration limitations
@@ -63,7 +62,7 @@ docs/screenshots/      Desktop and mobile browser captures
 | Styling | Tailwind CSS 3, PostCSS, CSS custom properties |
 | Animation | Framer Motion 13 |
 | Typography | Fraunces and Inter through `next/font/google` |
-| Integrations | Google Apps Script web app, Stripe Payment Links, `mailto:` |
+| Integrations | Optional hero video, `mailto:` email drafts |
 | Tooling | npm lockfile, ESLint, TypeScript, GitHub Actions |
 
 Exact dependency versions are recorded in `package-lock.json`.
@@ -80,7 +79,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000). The default blank environment values let you explore the site without contacting registration or payment services. Optional URLs must be HTTPS; see [configuration and migration instructions](docs/configuration.md).
+Open [localhost:3000](http://localhost:3000). Leave the optional video URL blank for the gradient hero. Video URLs must be HTTPS; see [configuration and migration instructions](docs/configuration.md).
 
 Production build and local preview:
 
@@ -110,23 +109,22 @@ npm run test:e2e
 E2E_MODE=configured npm run test:e2e
 ```
 
-The default run checks blank integration settings; the second checks configured settings. Both cover desktop and mobile Chromium. The runner overrides public integration variables, mocks registration and checkout, and blocks unexpected outbound browser requests, so local `.env` values cannot send test registrations to real services. Run the two modes sequentially because each builds into `.next`. Builds still require access to Google Fonts.
+The default run checks blank video settings; the second checks configured video. Both cover desktop and mobile Chromium, navigation, nonprofit program-interest links, and email-draft validation/encoding. The configured fixture deliberately supplies retired registration/payment variables to verify that they cannot restore checkout. External video is mocked; unexpected requests and all writes are blocked. Draft links are inspected without sending email. Run the two modes sequentially because each builds into `.next`. Builds still require access to Google Fonts.
 
-CI runs both modes and saves screenshots, traces, and the HTML report on failure for seven days. To inspect a local report, run `npx playwright show-report`. These checks verify the browser flow; they do not prove that the external registration service stores data or that Stripe processes payments. See the [Playwright web-server guide](https://playwright.dev/docs/test-webserver) for the runner configuration.
+CI runs both modes and saves screenshots, traces, and the HTML report on failure for seven days. To inspect a local report, run `npx playwright show-report`. Tests verify browser behavior and draft addresses, not email delivery. See the [Playwright web-server guide](https://playwright.dev/docs/test-webserver) for the runner configuration.
 
 Track each improvement with an issue, create a focused branch, and open a pull request referencing `Closes #<issue>`. Include relevant checks and screenshots for visible changes. Review deployment configuration before merging integration changes.
 
 ## Current limitations
 
-- Registration uses an opaque `no-cors` request. It cannot confirm that the external sheet stored an athlete's information, and the existing flow continues to payment after a network error.
-- Stripe checkout and registration are not reconciled. There is no webhook or verified payment/registration state.
-- Contact opens `mailto:`; it does not send server-side email. News items are static placeholder updates.
-- Content, schedule, and pricing are maintained in code. Verify them with the organization before publication.
+- Contact prepares `mailto:` drafts; it does not send server-side email or confirm delivery/enrollment. The published address was supplied by the organization; automated tests do not verify mailbox delivery.
+- News items are static placeholder updates. Content and schedules are maintained in code and should be kept current with the organization.
+- Participation costs and availability are discussed directly with the team. Seeking grants does not mean funding is secured or all programs are free.
 
 ## Future improvements
 
-1. Replace best-effort registration with a validated server API, confirmed persistence, idempotent retries, and clear error recovery.
-2. Reconcile Stripe webhooks with registrations and provide a verified confirmation flow.
+1. Add a confirmed-delivery inquiry service if the organization chooses one, with validation, spam protection, and clear error recovery.
+2. Add family guidance, approved photography, and support/partnership information as the organization supplies and approves content.
 3. Audit screen-reader navigation, form labels, and color contrast; extend reduced-motion support to section entrance and hover animations beyond the hero.
 4. Extend browser coverage with accessibility checks and additional browser engines.
 5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
