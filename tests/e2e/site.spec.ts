@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { test as base, expect } from "@playwright/test";
 import { baseURL, configured, integrationURLs } from "./settings";
 
@@ -78,7 +79,7 @@ test.describe("mobile navigation", () => {
     const panel = page.locator("#mobile-navigation");
     await toggle.focus();
     await page.keyboard.press("Enter");
-    for (const name of ["Programs", "Program Interest", "About", "News", "Contact"]) {
+    for (const name of ["Programs", "Program Interest", "Our Mission", "News", "Contact"]) {
       await page.keyboard.press("Tab");
       await expect(panel.getByRole("link", { name, exact: true })).toBeFocused();
     }
@@ -171,8 +172,8 @@ test("program interest offers the admin email without checkout or athlete collec
   await expect(page.locator('input[name="athleteName"], input[name="emergencyContact"]')).toHaveCount(0);
   await interest.getByRole("link", { name: "Prepare a message for our team" }).click();
   await expect(page).toHaveURL(`${baseURL}/#contact`);
-  await expect(page.getByRole("link", { name: "admin@midnimoathletics.com", exact: true })).toHaveAttribute("href", "mailto:admin@midnimoathletics.com");
-  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(2);
+  await expect(page.locator("#contact").getByRole("link", { name: "admin@midnimoathletics.com", exact: true })).toHaveAttribute("href", "mailto:admin@midnimoathletics.com");
+  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(3);
   if (configured) await expect(page.locator("video")).toHaveAttribute("src", integrationURLs.hero);
   else await expect(page.locator("video")).toHaveCount(0);
 });
@@ -209,4 +210,72 @@ test("contact prepares an encoded email draft and invalidates it after editing",
   await expect(draft).toHaveCount(0);
   await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
   expect(new URL((await draft.getAttribute("href"))!).searchParams.get("body")).toContain("Updated program question");
+});
+
+
+test.describe("page accessibility", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("exposes useful landmarks, headings, labels, and a working skip link", async ({ page }) => {
+    await page.keyboard.press("Tab");
+    const skip = page.getByRole("link", { name: "Skip to content" });
+    await expect(skip).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("main")).toBeFocused();
+    await expect(page.getByRole("banner")).toHaveCount(1);
+    await expect(page.getByRole("contentinfo")).toHaveCount(1);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+    const levels = await page.locator("h1,h2,h3,h4,h5,h6").evaluateAll(nodes => nodes.map(node => Number(node.tagName.slice(1))));
+    expect(levels.every((level, i) => i === 0 || level <= levels[i - 1] + 1)).toBe(true);
+    const tree = await page.getByRole("main").ariaSnapshot();
+    expect(tree).toContain('heading "The people behind Midnimo" [level=3]');
+    expect(tree).toContain('textbox "Email"');
+    await expect(page.getByLabel("Email", { exact: true })).toHaveAttribute("autocomplete", "email");
+  });
+
+  test("has no automated WCAG A/AA violations with the mobile menu closed or open", async ({ page, isMobile }) => {
+    const scan = async () => {
+      const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+      expect(results.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) }))).toEqual([]);
+    };
+    await scan();
+    if (isMobile) {
+      const toggle = page.getByRole("button", { name: "Toggle menu" });
+      const size = await toggle.boundingBox();
+      expect(size!.height).toBeGreaterThanOrEqual(44);
+      expect(size!.width).toBeGreaterThanOrEqual(44);
+      await toggle.click();
+      await scan();
+    }
+  });
+
+  test("keeps section content visible and stationary before scrolling and on hover", async ({ page }) => {
+    for (const id of ["programs", "signup", "about", "news", "contact"]) {
+      const section = page.locator(`#${id}`);
+      expect(await section.locator("*").evaluateAll(nodes => nodes.filter(node => node.textContent?.trim()).every(node => {
+        const style = getComputedStyle(node);
+        return style.opacity !== "0" && style.transform === "none";
+      }))).toBe(true);
+      await section.getByRole("heading").first().hover();
+      await expect(section.getByRole("heading").first()).toHaveCSS("transform", "none");
+    }
+  });
+});
+
+test("search and sharing previews identify the nonprofit and configured public domain", async ({ page }) => {
+  await expect(page).toHaveTitle("Midnimo Athletics | Youth Sports & Community");
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /A nonprofit welcoming all youth/);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", "https://midnimo.example.test");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", "https://midnimo.example.test/images/logo.png");
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary");
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/images/logo.png");
+  await expect(page.getByText("Coach Osman", { exact: true })).toBeVisible();
+});
+
+test("visitors can stop the decorative background video", async ({ page }) => {
+  test.skip(!configured, "The video control is only available with configured media");
+  await page.getByRole("button", { name: "Hide background video" }).click();
+  await expect(page.locator("video")).toHaveCount(0);
+  await page.getByRole("button", { name: "Show background video" }).click();
+  await expect(page.locator("video")).toHaveCount(1);
 });

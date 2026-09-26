@@ -1,7 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 const PILLARS = [
   {
     num: "01",
@@ -24,24 +20,16 @@ export default function About() {
   return (
     <section id="about" className="relative bg-ink px-6 py-24 md:px-16 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        <div
           className="mb-16 border-b border-white/10 pb-8"
         >
           <h2 className="font-display text-4xl font-semibold text-paper md:text-6xl">
             Our Mission
           </h2>
-        </motion.div>
+        </div>
 
         <div className="grid gap-12 md:grid-cols-[1.2fr_1fr] md:gap-16">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          <div
             className="flex flex-col gap-5 font-body text-base leading-relaxed text-paper/70 md:text-lg"
           >
             <p>
@@ -60,28 +48,35 @@ export default function About() {
               people together to practice skills, share experiences, and enjoy
               being active with others.
             </p>
-          </motion.div>
+          </div>
 
           <div className="flex flex-col gap-6">
-            {PILLARS.map((pillar, i) => (
-              <motion.div
+            {PILLARS.map((pillar) => (
+              <div
                 key={pillar.num}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -4 }}
                 className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-colors duration-500 hover:border-accent/40"
               >
                 <span className="font-display text-sm tracking-widest text-clay">
                   {pillar.num}
                 </span>
-                <h4 className="mt-2 font-display text-xl font-semibold text-paper">
+                <h3 className="mt-2 font-display text-xl font-semibold text-paper">
                   {pillar.title}
-                </h4>
-                <p className="mt-2 text-sm text-paper/60">{pillar.body}</p>
-              </motion.div>
+                </h3>
+                <p className="mt-2 text-sm text-paper/80">{pillar.body}</p>
+              </div>
             ))}
+          </div>
+        </div>
+        <div className="mt-16 grid gap-6 border-t border-white/10 pt-10 md:grid-cols-[1fr_2fr]">
+          <h3 className="font-display text-2xl font-semibold text-paper">The people behind Midnimo</h3>
+          <div>
+            <p className="font-display text-2xl text-paper">Coach Osman</p>
+            <p className="mt-2 text-base font-medium text-accent">Head Coach &amp; CEO</p>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-paper/80">
+              Coach Osman leads Midnimo Athletics as its head coach and CEO.
+              He has spent more than 20 years working with underrepresented and
+              underprivileged youth in the San Diego community.
+            </p>
           </div>
         </div>
       </div>

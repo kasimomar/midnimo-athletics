@@ -25,6 +25,7 @@ export default defineConfig({
     reuseExistingServer: false,
     env: {
       NEXT_TELEMETRY_DISABLED: "1",
+      SITE_URL: "https://midnimo.example.test",
       NEXT_PUBLIC_HERO_VIDEO_URL: configured ? integrationURLs.hero : "",
       NEXT_PUBLIC_REGISTRATION_ENDPOINT: configured ? integrationURLs.registration : "",
       NEXT_PUBLIC_STRIPE_PAYMENT_URL: configured ? integrationURLs.checkout : "",

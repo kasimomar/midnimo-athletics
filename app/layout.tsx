@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
+import { siteOrigin, siteTitle, siteDescription } from "@/lib/site-metadata";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -15,8 +16,26 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Midnimo Athletics",
-  description: "Youth athletic development through soccer, coaching, and community. Weekend league for ages 6–13 and after-school programs at Iftin Charter School.",
+  metadataBase: siteOrigin(),
+  title: siteTitle,
+  description: siteDescription,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Midnimo Athletics",
+    title: siteTitle,
+    description: siteDescription,
+    url: "/",
+    images: [{ url: "/images/logo.png", width: 1024, height: 1024, alt: "Midnimo Athletics logo" }],
+  },
+  twitter: {
+    card: "summary",
+    title: siteTitle,
+    description: siteDescription,
+    images: [{ url: "/images/logo.png", alt: "Midnimo Athletics logo" }],
+  },
+  icons: { icon: "/images/logo.png", apple: "/images/logo.png" },
 };
 
 export default function RootLayout({

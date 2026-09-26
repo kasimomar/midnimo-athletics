@@ -9,17 +9,20 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="bg-ink">
+    <>
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <Nav />
-      <div id="home">
-        <ScrollyCanvas />
-      </div>
-      <Programs />
-      <ProgramInterest />
-      <About />
-      <News />
-      <Contact />
+      <main id="main-content" tabIndex={-1} className="bg-ink">
+        <div id="home">
+          <ScrollyCanvas />
+        </div>
+        <Programs />
+        <ProgramInterest />
+        <About />
+        <News />
+        <Contact />
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }
