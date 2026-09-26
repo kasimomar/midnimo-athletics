@@ -1,11 +1,12 @@
 # Midnimo Athletics
 
-A responsive website for Midnimo Athletics, a nonprofit welcoming all youth through sports, movement, and community. Families can explore soccer and school programs, learn about the mission, and contact the team about participation. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
+A responsive website for Midnimo Athletics, a nonprofit welcoming all youth through sports, movement, and community. Families can explore soccer and school programs, learn about the mission, and contact the team about participation. Its sticky video hero and scroll-linked headline also showcase frontend interaction work. Built with Next.js, TypeScript, Tailwind CSS, and Framer Motion.
 
 ## Features
 
 - Community Weekend Soccer for ages 6–13, with a program-interest route to discuss participation with the team.
 - After-school athletic development and summer-program information for the Iftin Charter School partnership.
+- A warm cream, sage, and forest-green theme that retains the existing video, sticky hero, page layout, cards, and typography.
 - Responsive desktop/mobile navigation and a scroll-linked hero. Program, mission, news, and contact content render without entrance or hover movement.
 - The hero uses a static background and readable, stationary text when reduced motion is requested, including preference changes while the page is open. The timed loading splash has been removed. Visitors can also hide a configured background video.
 - A skip link, page landmarks, consecutive heading levels, visible keyboard focus, readable field boundaries, and autofill hints improve navigation and forms. Automated axe checks cover WCAG A/AA rules; these are not a claim of full conformance or a substitute for testing with screen-reader users.

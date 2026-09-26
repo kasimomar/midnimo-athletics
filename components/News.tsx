@@ -18,12 +18,12 @@ const ITEMS = [
 
 export default function News() {
   return (
-    <section id="news" className="relative bg-white/[0.03] px-6 py-24 md:px-16 md:py-32">
+    <section id="news" className="relative bg-sage px-6 py-24 md:px-16 md:py-32">
       <div className="mx-auto max-w-6xl">
         <div
-          className="mb-16 border-b border-white/10 pb-8"
+          className="mb-16 border-b border-line pb-8"
         >
-          <h2 className="font-display text-4xl font-semibold text-paper md:text-6xl">
+          <h2 className="font-display text-4xl font-semibold text-ink md:text-6xl">
             News &amp; Updates
           </h2>
         </div>
@@ -32,16 +32,16 @@ export default function News() {
           {ITEMS.map((item) => (
             <article
               key={item.title}
-              className="grid gap-2 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-colors duration-500 hover:border-accent/40 md:grid-cols-[160px_1fr] md:items-start md:gap-8 md:p-8"
+              className="grid gap-2 rounded-2xl border border-line bg-white p-6 backdrop-blur-md transition-colors duration-500 hover:border-forest/40 md:grid-cols-[160px_1fr] md:items-start md:gap-8 md:p-8"
             >
-              <span className="font-body text-sm uppercase tracking-widest text-clay">
+              <span className="font-body text-sm uppercase tracking-widest text-forest">
                 {item.date}
               </span>
               <div>
-                <h3 className="font-display text-xl font-semibold text-paper transition-colors duration-500 group-hover:text-accent md:text-2xl">
+                <h3 className="font-display text-xl font-semibold text-ink transition-colors duration-500 group-hover:text-forest md:text-2xl">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm text-paper/80">{item.body}</p>
+                <p className="mt-2 text-sm text-muted">{item.body}</p>
               </div>
             </article>
           ))}

@@ -147,6 +147,8 @@ test.describe("reduced-motion hero", () => {
     const title = page.getByRole("heading", { level: 1 });
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+    expect(await page.locator("#home > section").evaluate(element => element.clientHeight === innerHeight * 2)).toBe(true);
+    await expect(page.locator("#home > section > div")).toHaveCSS("position", "sticky");
     await expect(page.locator("video")).toHaveCount(configured ? 1 : 0);
     if (configured) await expect(page.locator("video")).toHaveAttribute("autoplay", "");
     await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));

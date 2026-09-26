@@ -8,10 +8,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0B0B0C",
-        paper: "#F5F2EC",
-        accent: "#6FA15E",
-        clay: "#C2884F",
+        ink: "#173A2B",
+        paper: "#F8F5ED",
+        accent: "#A5C88D",
+        clay: "#E6BD84",
+        forest: "#275D40",
+        sage: "#E5ECDF",
+        muted: "#506357",
+        line: "#C9D2C4",
       },
       fontFamily: {
         display: ["var(--font-display)"],

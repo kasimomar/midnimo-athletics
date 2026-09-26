@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Nav />
-      <main id="main-content" tabIndex={-1} className="bg-ink">
+      <main id="main-content" tabIndex={-1} className="bg-paper">
         <div id="home">
           <ScrollyCanvas />
         </div>
