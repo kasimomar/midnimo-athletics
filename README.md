@@ -6,9 +6,12 @@ A responsive website for Midnimo Athletics, a nonprofit welcoming all youth thro
 
 - Community Weekend Soccer for ages 6–13, with a program-interest route to discuss participation with the team.
 - After-school athletic development and summer-program information for the Iftin Charter School partnership.
-- Responsive desktop/mobile navigation, scroll-linked hero animation, and animated program cards.
-- The hero uses a static background and readable, stationary text when reduced motion is requested, including preference changes while the page is open. The timed loading splash has been removed.
+- Responsive desktop/mobile navigation and a scroll-linked hero. Program, mission, news, and contact content render without entrance or hover movement.
+- The hero uses a static background and readable, stationary text when reduced motion is requested, including preference changes while the page is open. The timed loading splash has been removed. Visitors can also hide a configured background video.
+- A skip link, page landmarks, consecutive heading levels, visible keyboard focus, readable field boundaries, and autofill hints improve navigation and forms. Automated axe checks cover WCAG A/AA rules; these are not a claim of full conformance or a substitute for testing with screen-reader users.
 - Mobile navigation exposes its expanded state, supports Tab and Escape, and closes when focus leaves or the layout switches to desktop.
+- A short introduction to Coach Osman, Head Coach & CEO, based on the organization's supplied role and 20-plus years of community experience.
+- Canonical URLs and search/social descriptions reflect the nonprofit identity; share previews use the existing logo.
 - A nonprofit mission centered on a safe, welcoming place for all youth, including youth with autism already participating in the programs.
 - Program inquiries and contact at `admin@midnimoathletics.com`; the contact form prepares an email draft for the visitor to review and send from their own email app.
 - A gradient hero when video is unconfigured. Contact works independently of video settings; there is no online checkout or athlete-registration submission.
@@ -30,7 +33,8 @@ Real browser captures of the nonprofit update with the gradient hero. No message
 ```mermaid
 flowchart TD
     Layout[app/layout.tsx: metadata, fonts, global styles] --> Page[app/page.tsx: page composition]
-    Page --> Sections[Client components: navigation, hero, programs, about, news]
+    Page --> Sections[Server content: programs, about, news]
+    Page --> Interactive[Client components: navigation and hero]
     Page --> Interest[ProgramInterest: email inquiry]
     Page --> Contact[Contact: email draft preparation]
     Config[Public build-time environment variables] --> Hero[ScrollyCanvas: video or gradient]
@@ -38,7 +42,7 @@ flowchart TD
     Contact --> Email
 ```
 
-The App Router root page composes client components for animation and browser interactions. Despite its inherited name, `ScrollyCanvas.tsx` renders an HTML **video**, not a canvas or image sequence. Framer Motion tracks a 200vh section to animate its overlay. The site has no application database, authentication, API routes, or payment webhook in this repository.
+The App Router root page combines server-rendered content with client components for navigation, hero animation, and draft preparation. Despite its inherited name, `ScrollyCanvas.tsx` renders an HTML **video**, not a canvas or image sequence. Framer Motion tracks a 200vh section to animate its overlay. The site has no application database, authentication, API routes, or payment webhook in this repository.
 
 ```text
 app/                    Root page, layout, metadata, and global CSS
@@ -109,7 +113,7 @@ npm run test:e2e
 E2E_MODE=configured npm run test:e2e
 ```
 
-The default run checks blank video settings; the second checks configured video. Both cover desktop and mobile Chromium, navigation, nonprofit program-interest links, and email-draft validation/encoding. The configured fixture deliberately supplies retired registration/payment variables to verify that they cannot restore checkout. External video is mocked; unexpected requests and all writes are blocked. Draft links are inspected without sending email. Run the two modes sequentially because each builds into `.next`. Builds still require access to Google Fonts.
+The default run checks blank video settings; the second checks configured video. Both cover desktop and mobile Chromium, navigation, nonprofit program-interest links, email-draft validation/encoding, keyboard landmarks and headings, reduced motion, and automated axe accessibility checks. Accessibility-tree checks verify exposed names/roles; a manual VoiceOver/NVDA session is still outstanding. The configured fixture deliberately supplies retired registration/payment variables to verify that they cannot restore checkout. External video is mocked; unexpected requests and all writes are blocked. Draft links are inspected without sending email. Run the two modes sequentially because each builds into `.next`. Builds still require access to Google Fonts.
 
 CI runs both modes and saves screenshots, traces, and the HTML report on failure for seven days. To inspect a local report, run `npx playwright show-report`. Tests verify browser behavior and draft addresses, not email delivery. See the [Playwright web-server guide](https://playwright.dev/docs/test-webserver) for the runner configuration.
 
@@ -125,7 +129,7 @@ Track each improvement with an issue, create a focused branch, and open a pull r
 
 1. Add a confirmed-delivery inquiry service if the organization chooses one, with validation, spam protection, and clear error recovery.
 2. Add family guidance, approved photography, and support/partnership information as the organization supplies and approves content.
-3. Audit screen-reader navigation, form labels, and color contrast; extend reduced-motion support to section entrance and hover animations beyond the hero.
+3. Test with screen-reader users and broaden manual accessibility review, including error announcements when a real inquiry service is introduced.
 4. Extend browser coverage with accessibility checks and additional browser engines.
 5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
 6. Keep dependencies patched and remove unused starter components/documentation when appropriate.

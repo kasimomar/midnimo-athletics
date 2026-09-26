@@ -1,7 +1,3 @@
-"use client";
-
-import { motion, type Variants } from "framer-motion";
-
 interface Program {
   letter: string;
   title: string;
@@ -51,50 +47,31 @@ const PROGRAMS: Program[] = [
   },
 ];
 
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] },
-  }),
-};
-
 export default function Programs() {
   return (
     <section id="programs" className="relative bg-ink px-6 py-24 md:px-16 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        <div
           className="mb-16 flex flex-col gap-4 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between"
         >
           <h2 className="font-display text-4xl font-semibold text-paper md:text-6xl">
             Community Programs
           </h2>
-          <p className="max-w-sm text-sm text-paper/60">
+          <p className="max-w-sm text-sm text-paper/80">
             Sports and movement that bring young people together — on the weekend and after school.
           </p>
-        </motion.div>
+        </div>
 
         <div className="flex flex-col gap-6">
-          {PROGRAMS.map((program, i) => (
-            <motion.div
+          {PROGRAMS.map((program) => (
+            <div
               key={program.letter}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              whileHover={{ y: -6 }}
               className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md transition-colors duration-500 hover:border-accent/40 md:p-12"
             >
-              <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-accent/0 via-accent/0 to-clay/0 opacity-0 transition-opacity duration-500 group-hover:opacity-20" />
+              <div aria-hidden="true" className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-accent/0 via-accent/0 to-clay/0 opacity-0 transition-opacity duration-500 group-hover:opacity-20" />
 
               <div className="relative grid gap-6 md:grid-cols-[80px_1fr]">
-                <span className="font-display text-5xl font-semibold text-clay/70">
+                <span className="font-display text-5xl font-semibold text-clay">
                   {program.letter}
                 </span>
 
@@ -112,7 +89,7 @@ export default function Programs() {
                   {program.bullets.length > 0 && (
                     <ul className="mt-5 flex flex-col gap-2">
                       {program.bullets.map((b) => (
-                        <li key={b} className="flex gap-3 text-sm text-paper/60">
+                        <li key={b} className="flex gap-3 text-sm text-paper/80">
                           <span className="text-accent">—</span>
                           {b}
                         </li>
@@ -121,7 +98,7 @@ export default function Programs() {
                   )}
 
                   {program.note && (
-                    <p className="mt-5 text-sm italic text-paper/50">{program.note}</p>
+                    <p className="mt-5 text-sm italic text-paper/70">{program.note}</p>
                   )}
 
                   {program.cta && (
@@ -136,7 +113,7 @@ export default function Programs() {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

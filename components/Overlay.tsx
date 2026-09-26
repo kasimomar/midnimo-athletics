@@ -32,7 +32,7 @@ export default function Overlay({ progress, reducedMotion }: OverlayProps) {
   const scale = useTransform(progress, [0, 0.5], [1, 1.08]);
 
   return (
-    <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 pb-10 pt-24 text-center">
+    <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 pb-24 pt-28 text-center">
       <p
         className="mb-5 font-body text-xs uppercase tracking-[0.2em] text-clay md:text-sm"
       >

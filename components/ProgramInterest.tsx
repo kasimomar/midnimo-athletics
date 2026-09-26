@@ -5,7 +5,7 @@ export default function ProgramInterest() {
     <section id="signup" aria-labelledby="program-interest-title" className="relative scroll-mt-24 bg-white/[0.03] px-6 py-24 md:px-16 md:py-32">
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.3fr_1fr] md:gap-16">
         <div>
-          <p className="mb-4 font-body text-xs uppercase tracking-widest text-clay">Take the next step</p>
+          <p className="mb-4 font-body text-sm uppercase tracking-widest text-clay">Take the next step</p>
           <h2 id="program-interest-title" className="font-display text-4xl font-semibold text-paper md:text-6xl">
             Program Interest
           </h2>
@@ -29,7 +29,7 @@ export default function ProgramInterest() {
             Email About a Program
           </a>
           <p className="mt-3 break-all text-sm text-paper/70">{contactEmail}</p>
-          <p className="mt-2 text-xs leading-relaxed text-paper/60">
+          <p className="mt-2 text-sm leading-relaxed text-paper/80">
             Opens your email app. You can also copy this address into your email service.
           </p>
           <a href="#contact" className="mt-6 text-sm text-accent underline underline-offset-4">Prepare a message for our team</a>

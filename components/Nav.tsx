@@ -6,13 +6,12 @@ import Image from "next/image";
 const LINKS = [
   { href: "#programs", label: "Programs" },
   { href: "#signup", label: "Program Interest" },
-  { href: "#about", label: "About" },
+  { href: "#about", label: "Our Mission" },
   { href: "#news", label: "News" },
   { href: "#contact", label: "Contact" },
 ];
 
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -31,13 +30,6 @@ export default function Nav() {
     return () => desktop.removeEventListener("change", onBreakpointChange);
   }, []);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <header
       onKeyDown={(event) => {
@@ -49,15 +41,13 @@ export default function Nav() {
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}
-      className={`fixed top-0 z-50 w-full transition-colors duration-500 ${
-        scrolled ? "bg-ink/80 backdrop-blur-md border-b border-white/10" : "bg-transparent"
-      }`}
+      className="fixed top-0 z-50 w-full border-b border-white/10 bg-ink"
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
         <a href="#home" onClick={() => setOpen(false)} className="flex items-center gap-3">
           <Image
             src="/images/logo.png"
-            alt="Midnimo Athletics logo"
+            alt=""
             width={36}
             height={36}
             className="rounded-full"
@@ -72,7 +62,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="font-body text-xs uppercase tracking-widest text-paper/70 transition-colors duration-300 hover:text-accent lg:text-sm"
+              className="flex min-h-11 items-center font-body text-sm text-paper/70 transition-colors duration-300 hover:text-accent lg:text-sm"
             >
               {link.label}
             </a>
@@ -86,7 +76,7 @@ export default function Nav() {
           aria-expanded={open}
           aria-controls="mobile-navigation"
           onClick={() => setOpen((v) => !v)}
-          className="flex flex-col gap-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent md:hidden"
+          className="flex min-h-11 min-w-11 flex-col items-center justify-center gap-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent md:hidden"
         >
           <span className="block h-px w-6 bg-paper transition-transform duration-300" style={open ? { transform: "translateY(6px) rotate(45deg)" } : undefined} />
           <span className={`block h-px w-6 bg-paper transition-opacity duration-300 ${open ? "opacity-0" : "opacity-100"}`} />
@@ -97,14 +87,14 @@ export default function Nav() {
       <nav
         id="mobile-navigation"
         aria-label="Mobile"
-        className={`${open ? "flex" : "hidden"} flex-col gap-4 border-t border-white/10 bg-ink px-6 py-6 md:hidden`}
+        className={`${open ? "flex" : "hidden"} max-h-[calc(100dvh-5rem)] flex-col gap-4 overflow-y-auto border-t border-white/10 bg-ink px-6 py-6 md:hidden`}
       >
         {LINKS.map((link) => (
           <a
             key={link.href}
             href={link.href}
             onClick={() => setOpen(false)}
-            className="font-body text-sm uppercase tracking-widest text-paper/70 transition-colors duration-300 hover:text-accent"
+            className="flex min-h-11 items-center font-body text-base text-paper/70 transition-colors duration-300 hover:text-accent"
           >
             {link.label}
           </a>

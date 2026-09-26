@@ -5,8 +5,11 @@ Copy `.env.example` to `.env.local` for local development. Next.js embeds `NEXT_
 | Variable | Purpose | When absent or invalid |
 | --- | --- | --- |
 | `NEXT_PUBLIC_HERO_VIDEO_URL` | Optional HTTPS background-video URL | Gradient hero |
+| `SITE_URL` | Server-side HTTPS public origin for canonical and sharing links, e.g. your verified public domain | Vercel production domain, or localhost outside Vercel |
 
 Blank, malformed, non-HTTPS, and credential-bearing URLs are treated as unconfigured. Reduced-motion visitors receive the static gradient even when a video URL is configured. The browser checks the visitor's preference before adding the video.
+
+`SITE_URL` must be an origin without credentials, a path, query parameters, or fragment; invalid explicit values fail the build. Set it in Production and Preview to the same canonical public domain. It is public metadata, but does not need a `NEXT_PUBLIC_` prefix.
 
 ## Program inquiries and contact
 

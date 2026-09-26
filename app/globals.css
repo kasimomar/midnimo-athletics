@@ -18,10 +18,25 @@ body {
   box-sizing: border-box;
 }
 
-::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
+html { scroll-padding-top: 7rem; }
+
+:focus-visible {
+  outline: 3px solid #6fa15e;
+  outline-offset: 4px;
 }
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  background: #f5f2ec;
+  color: #0b0b0c;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
 
 @media (prefers-reduced-motion: reduce) {
   html,
