@@ -49,15 +49,15 @@ const PROGRAMS: Program[] = [
 
 export default function Programs() {
   return (
-    <section id="programs" className="relative bg-ink px-6 py-24 md:px-16 md:py-32">
+    <section id="programs" className="relative bg-paper px-6 py-24 md:px-16 md:py-32">
       <div className="mx-auto max-w-6xl">
         <div
-          className="mb-16 flex flex-col gap-4 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between"
+          className="mb-16 flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between"
         >
-          <h2 className="font-display text-4xl font-semibold text-paper md:text-6xl">
+          <h2 className="font-display text-4xl font-semibold text-ink md:text-6xl">
             Community Programs
           </h2>
-          <p className="max-w-sm text-sm text-paper/80">
+          <p className="max-w-sm text-sm text-muted">
             Sports and movement that bring young people together — on the weekend and after school.
           </p>
         </div>
@@ -66,31 +66,31 @@ export default function Programs() {
           {PROGRAMS.map((program) => (
             <div
               key={program.letter}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md transition-colors duration-500 hover:border-accent/40 md:p-12"
+              className="group relative overflow-hidden rounded-2xl border border-line bg-white p-8 backdrop-blur-md transition-colors duration-500 hover:border-forest/40 md:p-12"
             >
-              <div aria-hidden="true" className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-accent/0 via-accent/0 to-clay/0 opacity-0 transition-opacity duration-500 group-hover:opacity-20" />
+              <div aria-hidden="true" className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-sage/0 via-sage/0 to-sage/0 opacity-0 transition-opacity duration-500 group-hover:opacity-20" />
 
               <div className="relative grid gap-6 md:grid-cols-[80px_1fr]">
-                <span className="font-display text-5xl font-semibold text-clay">
+                <span className="font-display text-5xl font-semibold text-forest">
                   {program.letter}
                 </span>
 
                 <div>
-                  <h3 className="font-display text-2xl font-semibold text-paper transition-colors duration-500 group-hover:text-accent md:text-3xl">
+                  <h3 className="font-display text-2xl font-semibold text-ink transition-colors duration-500 group-hover:text-forest md:text-3xl">
                     {program.title}
                   </h3>
-                  <p className="mt-2 font-body text-sm uppercase tracking-widest text-clay">
+                  <p className="mt-2 font-body text-sm uppercase tracking-widest text-forest">
                     {program.meta}
                   </p>
-                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-paper/70 md:text-base">
+                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
                     {program.description}
                   </p>
 
                   {program.bullets.length > 0 && (
                     <ul className="mt-5 flex flex-col gap-2">
                       {program.bullets.map((b) => (
-                        <li key={b} className="flex gap-3 text-sm text-paper/80">
-                          <span className="text-accent">—</span>
+                        <li key={b} className="flex gap-3 text-sm text-muted">
+                          <span className="text-forest">—</span>
                           {b}
                         </li>
                       ))}
@@ -98,14 +98,14 @@ export default function Programs() {
                   )}
 
                   {program.note && (
-                    <p className="mt-5 text-sm italic text-paper/70">{program.note}</p>
+                    <p className="mt-5 text-sm italic text-muted">{program.note}</p>
                   )}
 
                   {program.cta && (
-                    <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-white/10 pt-6">
+                    <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-line pt-6">
                         <a
                           href={program.cta.href}
-                          className="rounded-full border border-accent px-6 py-2.5 font-body text-sm uppercase tracking-widest text-accent transition-all duration-300 hover:bg-accent hover:text-ink hover:shadow-[0_0_24px_rgba(111,161,94,0.35)]"
+                          className="rounded-full border border-forest px-6 py-2.5 font-body text-sm uppercase tracking-widest text-forest transition-all duration-300 hover:bg-forest hover:text-paper hover:shadow-[0_0_24px_rgba(39,93,64,0.15)]"
                         >
                           {program.cta.label}
                         </a>

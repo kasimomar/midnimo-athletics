@@ -45,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body className="font-body antialiased bg-ink text-paper">{children}</body>
+      <body className="font-body antialiased bg-paper text-ink">{children}</body>
     </html>
   );
 }
