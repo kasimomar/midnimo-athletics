@@ -279,3 +279,23 @@ test("visitors can stop the decorative background video", async ({ page }) => {
   await page.getByRole("button", { name: "Show background video" }).click();
   await expect(page.locator("video")).toHaveCount(1);
 });
+
+
+test("hero eyebrow keeps AA text contrast even over a white video frame", async ({ page }) => {
+  const colors = await page.locator("#home").evaluate(element => {
+    const veil = element.querySelector(".pointer-events-none")!;
+    const eyebrow = element.querySelector("p")!;
+    return { veil: getComputedStyle(veil).backgroundColor, text: getComputedStyle(eyebrow).color };
+  });
+  const rgba = (color: string) => color.match(/[\d.]+/g)!.map(Number);
+  const veil = rgba(colors.veil);
+  const alpha = veil[3] ?? 1;
+  const brightestBackground = veil.slice(0, 3).map(channel => channel * alpha + 255 * (1 - alpha));
+  const luminance = (rgb: number[]) => rgb.slice(0, 3).reduce((sum, channel, index) => {
+    const normalized = channel / 255;
+    const linear = normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+    return sum + linear * [0.2126, 0.7152, 0.0722][index];
+  }, 0);
+  const ratio = (luminance(rgba(colors.text)) + 0.05) / (luminance(brightestBackground) + 0.05);
+  expect(ratio).toBeGreaterThanOrEqual(4.5);
+});

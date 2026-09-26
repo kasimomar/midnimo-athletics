@@ -34,7 +34,7 @@ export default function ScrollyCanvas() {
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-ink via-accent/20 to-clay/20" />
         )}
 
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-ink/85" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-ink/90" />
 
         {/* Parallax title */}
         <Overlay progress={scrollYProgress} reducedMotion={reducedMotion} />
