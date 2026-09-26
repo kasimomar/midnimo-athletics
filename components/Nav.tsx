@@ -87,7 +87,7 @@ export default function Nav() {
       <nav
         id="mobile-navigation"
         aria-label="Mobile"
-        className={`${open ? "flex" : "hidden"} flex-col gap-4 border-t border-white/10 bg-ink px-6 py-6 md:hidden`}
+        className={`${open ? "flex" : "hidden"} max-h-[calc(100dvh-5rem)] flex-col gap-4 overflow-y-auto border-t border-white/10 bg-ink px-6 py-6 md:hidden`}
       >
         {LINKS.map((link) => (
           <a

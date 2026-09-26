@@ -97,6 +97,22 @@ test.describe("mobile navigation", () => {
     expect(await panel.evaluate(element => element.contains(document.activeElement))).toBe(false);
   });
 
+  test("keeps menu links reachable on short landscape screens", async ({ page }) => {
+    await page.setViewportSize({ width: 667, height: 320 });
+    const toggle = page.getByRole("button", { name: "Toggle menu" });
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    for (let i = 0; i < 5; i++) await page.keyboard.press("Tab");
+    const contact = page.getByRole("navigation", { name: "Mobile" }).getByRole("link", { name: "Contact", exact: true });
+    await expect(contact).toBeFocused();
+    const bounds = await contact.boundingBox();
+    expect(bounds!.y).toBeGreaterThanOrEqual(0);
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(320);
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(`${baseURL}/#contact`);
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
   test("resets the open panel across the desktop breakpoint", async ({ page }) => {
     const toggle = page.getByRole("button", { name: "Toggle menu", includeHidden: true });
     await toggle.click();
