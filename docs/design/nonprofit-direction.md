@@ -10,11 +10,11 @@ The superseded layout preview explored a static opening, mission copy, and a pro
 
 <img src="visual-direction-mobile.png" width="300" alt="Mobile preview of the cream and green direction" />
 
-## Selected content still pending
+## Selected content status
 
-- **9 — real inquiry form:** Google Workspace is the receiving inbox. A website sending provider still needs to be chosen and configured. Resend was proposed; the current site continues to prepare email drafts and makes no delivery claim.
-- **14 — apply visual style:** palette approved; preserve the current scrollytelling layout and video.
-- **16 — team:** the initial Coach Osman bio uses the owner's supplied name, Head Coach/CEO role, and more than 20 years working with underrepresented and underprivileged youth in San Diego. Full name, founding story, coaching approach, and any photos are awaiting further details.
+- **9 — real inquiry form:** Google Workspace is the receiving inbox. On September 27, the owner selected Resend for website sending. Setup awaits marketplace terms acceptance and verified configuration; the current site continues to prepare email drafts and makes no delivery claim.
+- **14 — apply visual style:** shipped in PR #21, preserving the current scrollytelling layout and video.
+- **16 — team:** on September 27, the owner confirmed the public name “Coach Osman” and that he founded Midnimo Athletics. The bio identifies him as Founder, Head Coach & CEO and retains his more than 20 years working with underrepresented and underprivileged youth in San Diego. Coaching examples and any photos can be added if supplied for public use.
 - **17 — support:** deferred at the owner's request while the organization settles its identity. No support section or donation processing is introduced.
 
 ## Accessibility verification
