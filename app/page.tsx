@@ -1,3 +1,4 @@
+import { inquirySendingEnabled } from "@/lib/inquiry-config";
 import Nav from "@/components/Nav";
 import ScrollyCanvas from "@/components/ScrollyCanvas";
 import Programs from "@/components/Programs";
@@ -20,7 +21,7 @@ export default function Home() {
         <ProgramInterest />
         <About />
         <News />
-        <Contact />
+        <Contact sendingEnabled={inquirySendingEnabled()} isPreview={process.env.VERCEL_ENV === "preview"} />
       </main>
       <Footer />
     </>

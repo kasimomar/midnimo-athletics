@@ -14,7 +14,10 @@ const test = base.extend<{ network: NetworkLog }>({
       const request = route.request();
       const url = request.url();
       const method = request.method();
-      if (url === integrationURLs.hero && method === "GET") {
+      if (new URL(url).pathname.endsWith("/a-4-a/c.js")) {
+        // Local browser tests never call BotID or send real email.
+        await route.fulfill({ contentType: "application/javascript", body: "window.V_C.push({b:1});" });
+      } else if (url === integrationURLs.hero && method === "GET") {
         network.mediaRequests += 1;
         await route.fulfill({ status: 204 });
       } else if (new URL(url).origin === baseURL && ["GET", "HEAD"].includes(method)) {
@@ -188,7 +191,7 @@ test("program interest offers the admin email without checkout or athlete collec
   await expect(page.getByText(/\$70|Register & Pay|monthly billing|Pay with Stripe/)).toHaveCount(0);
   await expect(page.locator('a[href*="stripe"], a[href*="checkout.example.test"]')).toHaveCount(0);
   await expect(page.locator('input[name="athleteName"], input[name="emergencyContact"]')).toHaveCount(0);
-  await interest.getByRole("link", { name: "Prepare a message for our team" }).click();
+  await interest.getByRole("link", { name: "Write to our team" }).click();
   await expect(page).toHaveURL(`${baseURL}/#contact`);
   await expect(page.locator("#contact").getByRole("link", { name: "admin@midnimoathletics.com", exact: true })).toHaveAttribute("href", "mailto:admin@midnimoathletics.com");
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(3);
@@ -196,19 +199,20 @@ test("program interest offers the admin email without checkout or athlete collec
   else await expect(page.locator("video")).toHaveCount(0);
 });
 
-test("contact requires valid details before preparing a draft", async ({ page }) => {
-  await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
+test("contact requires valid details before submission", async ({ page }) => {
+  await page.getByRole("button", { name: configured ? "Send Inquiry" : "Prepare Email", exact: true }).click();
   await expect(page.getByLabel("Name", { exact: true })).toBeFocused();
   await expect(page.getByRole("link", { name: "Open Email App" })).toHaveCount(0);
   await page.getByLabel("Name", { exact: true }).fill("Test Parent");
   await page.getByLabel("Email", { exact: true }).fill("not-an-email");
-  await page.getByLabel("Message", { exact: true }).fill("Program question");
-  await page.getByRole("button", { name: "Prepare Email", exact: true }).click();
+  await page.getByLabel(configured ? "Message (optional)" : "Message", { exact: true }).fill("Program question");
+  await page.getByRole("button", { name: configured ? "Send Inquiry" : "Prepare Email", exact: true }).click();
   await expect(page.getByLabel("Email", { exact: true })).toBeFocused();
   await expect(page.getByRole("link", { name: "Open Email App" })).toHaveCount(0);
 });
 
 test("contact prepares an encoded email draft and invalidates it after editing", async ({ page }) => {
+  test.skip(configured, "Configured sending uses the inquiry flow");
   const name = "Test & Family";
   const email = "test+family@example.com";
   const message = "Soccer & movement?\nWhat are the next steps #1 — thank you.";
@@ -316,4 +320,78 @@ test("hero eyebrow keeps AA text contrast even over a white video frame", async 
   }, 0);
   const ratio = (luminance(rgba(colors.text)) + 0.05) / (luminance(brightestBackground) + 0.05);
   expect(ratio).toBeGreaterThanOrEqual(4.5);
+});
+
+
+test.describe("inquiry sending", () => {
+  test.beforeEach(async ({ page }) => {
+    test.skip(!configured, "Online sending is explicitly disabled in the blank fixture");
+    await page.getByLabel("Name", { exact: true }).fill("Test Parent");
+    await page.getByLabel("Email", { exact: true }).fill("family@example.test");
+    await page.getByLabel("Program", { exact: true }).selectOption("Community Weekend Soccer");
+  });
+
+  test("submits an optional question once and announces acceptance", async ({ page, context }) => {
+    let calls = 0;
+    let release!: () => void;
+    const wait = new Promise<void>(resolve => { release = resolve; });
+    await context.route("**/api/inquiry", async route => {
+      calls++;
+      const body = route.request().postDataJSON();
+      expect(body).toMatchObject({ name: "Test Parent", email: "family@example.test", program: "Community Weekend Soccer", message: "", website: "" });
+      expect(body.requestId).toMatch(/^[0-9a-f-]{36}$/);
+      expect(body).not.toHaveProperty("to");
+      await wait;
+      await route.fulfill({ json: { message: "Accepted" } });
+    });
+    await page.getByRole("button", { name: "Send Inquiry", exact: true }).click();
+    await expect(page.getByRole("status")).toHaveText("Sending your inquiry…");
+    await expect(page.getByRole("button", { name: "Sending…", exact: true })).toBeDisabled();
+    await expect(page.getByLabel("Email", { exact: true })).toBeDisabled();
+    release();
+    await expect(page.getByRole("status")).toContainText("Your inquiry has been submitted");
+    await expect(page.getByRole("status")).toContainText("does not reserve a place");
+    await expect(page.getByRole("button", { name: "Inquiry Submitted" })).toBeDisabled();
+    expect(calls).toBe(1);
+    await page.getByLabel("Message (optional)", { exact: true }).fill("A new question");
+    await expect(page.getByRole("button", { name: "Send Inquiry", exact: true })).toBeEnabled();
+    await expect(page.getByRole("status")).toHaveText("");
+  });
+
+  test("preserves details on failure and reuses the request ID on retry", async ({ page, context }) => {
+    const ids: string[] = [];
+    await page.getByLabel("Message (optional)", { exact: true }).fill("What should we bring?");
+    await context.route("**/api/inquiry", async route => {
+      ids.push(route.request().postDataJSON().requestId);
+      await route.fulfill({ status: ids.length === 1 ? 502 : 200, json: { message: "We could not confirm sending. Try again or email our team directly." } });
+    });
+    await page.getByRole("button", { name: "Send Inquiry", exact: true }).click();
+    await expect(page.getByRole("status")).toContainText("could not confirm sending");
+    await expect(page.getByLabel("Message (optional)", { exact: true })).toHaveValue("What should we bring?");
+    await expect(page.locator('#contact a[href="mailto:admin@midnimoathletics.com"]')).toBeVisible();
+    await page.getByRole("button", { name: "Send Inquiry", exact: true }).click();
+    await expect(page.getByRole("status")).toContainText("Your inquiry has been submitted");
+    expect(ids).toHaveLength(2);
+    expect(ids[0]).toBe(ids[1]);
+  });
+
+  test("recovers from network failure without claiming submission", async ({ page, context }) => {
+    await context.route("**/api/inquiry", route => route.abort("failed"));
+    await page.getByRole("button", { name: "Send Inquiry", exact: true }).click();
+    await expect(page.getByRole("status")).toContainText("could not confirm sending");
+    await expect(page.getByRole("button", { name: "Send Inquiry", exact: true })).toBeEnabled();
+    await expect(page.getByLabel("Name", { exact: true })).toHaveValue("Test Parent");
+  });
+
+  test("recovers if the verification script stalls before a request", async ({ page, context }) => {
+    await page.clock.install();
+    await context.route("**/*/a-4-a/c.js*", route => route.fulfill({ contentType: "application/javascript", body: "/* verification unavailable */" }));
+    await page.getByRole("button", { name: "Send Inquiry", exact: true }).click();
+    await expect(page.getByRole("status")).toHaveText("Sending your inquiry…");
+    await page.clock.fastForward(26000);
+    await expect(page.getByRole("status")).toContainText("could not confirm sending");
+    await expect(page.getByRole("button", { name: "Send Inquiry", exact: true })).toBeEnabled();
+    await expect(page.getByLabel("Email", { exact: true })).toHaveValue("family@example.test");
+  });
+
 });

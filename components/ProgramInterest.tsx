@@ -32,7 +32,7 @@ export default function ProgramInterest() {
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Opens your email app. You can also copy this address into your email service.
           </p>
-          <a href="#contact" className="mt-6 text-sm text-forest underline underline-offset-4">Prepare a message for our team</a>
+          <a href="#contact" className="mt-6 text-sm text-forest underline underline-offset-4">Write to our team</a>
         </div>
       </div>
     </section>
