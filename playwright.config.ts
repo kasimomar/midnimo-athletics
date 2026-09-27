@@ -25,6 +25,9 @@ export default defineConfig({
     reuseExistingServer: false,
     env: {
       NEXT_TELEMETRY_DISABLED: "1",
+      CONTACT_FORM_ENABLED: configured ? "true" : "false",
+      RESEND_API_KEY: configured ? "re_test_not_a_real_key" : "",
+      RESEND_EMAIL_DOMAIN: configured ? "mail.example.test" : "",
       SITE_URL: "https://midnimo.example.test",
       NEXT_PUBLIC_HERO_VIDEO_URL: configured ? integrationURLs.hero : "",
       NEXT_PUBLIC_REGISTRATION_ENDPOINT: configured ? integrationURLs.registration : "",
