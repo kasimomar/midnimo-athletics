@@ -71,9 +71,9 @@ export default function About() {
           <h3 className="font-display text-2xl font-semibold text-paper">The people behind Midnimo</h3>
           <div>
             <p className="font-display text-2xl text-paper">Coach Osman</p>
-            <p className="mt-2 text-base font-medium text-accent">Head Coach &amp; CEO</p>
+            <p className="mt-2 text-base font-medium text-accent">Founder, Head Coach &amp; CEO</p>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-paper/80">
-              Coach Osman leads Midnimo Athletics as its head coach and CEO.
+              Coach Osman founded Midnimo Athletics and leads the nonprofit as its head coach and CEO.
               He has spent more than 20 years working with underrepresented and
               underprivileged youth in the San Diego community.
             </p>

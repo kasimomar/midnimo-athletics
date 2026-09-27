@@ -11,7 +11,7 @@ A responsive website for Midnimo Athletics, a nonprofit welcoming all youth thro
 - The hero uses a static background and readable, stationary text when reduced motion is requested, including preference changes while the page is open. The timed loading splash has been removed. Visitors can also hide a configured background video.
 - A skip link, page landmarks, consecutive heading levels, visible keyboard focus, readable field boundaries, and autofill hints improve navigation and forms. Automated axe checks cover WCAG A/AA rules; these are not a claim of full conformance or a substitute for testing with screen-reader users.
 - Mobile navigation exposes its expanded state, supports Tab and Escape, and closes when focus leaves or the layout switches to desktop.
-- A short introduction to Coach Osman, Head Coach & CEO, based on the organization's supplied role and 20-plus years of community experience.
+- A short introduction to Coach Osman, Founder, Head Coach & CEO, based on the organization's supplied roles and 20-plus years of community experience.
 - Canonical URLs and search/social descriptions reflect the nonprofit identity; share previews use the existing logo.
 - A nonprofit mission centered on a safe, welcoming place for all youth, including youth with autism already participating in the programs.
 - Program inquiries and contact at `admin@midnimoathletics.com`; the contact form prepares an email draft for the visitor to review and send from their own email app.
