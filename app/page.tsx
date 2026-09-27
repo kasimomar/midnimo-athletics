@@ -21,7 +21,7 @@ export default function Home() {
         <ProgramInterest />
         <About />
         <News />
-        <Contact sendingEnabled={inquirySendingEnabled()} />
+        <Contact sendingEnabled={inquirySendingEnabled()} isPreview={process.env.VERCEL_ENV === "preview"} />
       </main>
       <Footer />
     </>

@@ -11,7 +11,7 @@ const DETAILS = [
   { label: "After-School Program", value: "Iftin Charter School · Mon–Fri, 4:00–6:00 PM" },
 ];
 
-export default function Contact({ sendingEnabled = false }: { sendingEnabled?: boolean }) {
+export default function Contact({ sendingEnabled = false, isPreview = false }: { sendingEnabled?: boolean; isPreview?: boolean }) {
   const [draftHref, setDraftHref] = useState<string>();
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
@@ -53,7 +53,9 @@ export default function Contact({ sendingEnabled = false }: { sendingEnabled?: b
         setStatus(typeof result.message === "string" ? result.message : "We could not confirm sending. Try again or email our team directly.");
         return;
       }
-      setStatus("Your inquiry has been submitted to our team. This does not reserve a place in a program.");
+      setStatus(isPreview
+        ? "Preview test submitted. No inquiry was sent to Midnimo."
+        : "Your inquiry has been submitted to our team. This does not reserve a place in a program.");
       setSubmitted(true);
     } catch {
       setStatus("We could not confirm sending. Try again or email our team directly.");
@@ -73,6 +75,7 @@ export default function Contact({ sendingEnabled = false }: { sendingEnabled?: b
           <h2 className="font-display text-4xl font-semibold text-ink md:text-6xl">
             Talk With Our Team
           </h2>
+          {sendingEnabled && isPreview && <p className="mt-4 text-sm font-medium text-forest">Preview mode: submissions go to a test inbox. To contact Midnimo, use the email address below.</p>}
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
             {sendingEnabled
               ? "Send a program inquiry to our team at admin@midnimoathletics.com. Your name, email, and program choice are required; your question is optional. Please do not include diagnoses or medical information."

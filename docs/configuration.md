@@ -24,7 +24,7 @@ Set `CONTACT_FORM_ENABLED=true` only after verifying the sender and checking the
 
 The online form collects a name, reply email, program choice, and optional question. It requests no diagnosis, medical history, payment, or athlete record. The copy explains who receives the message. Resend and the receiving Google Workspace inbox process the inquiry; the app does not store it in a database or log its contents.
 
-`POST /api/inquiry` requires same-origin JSON, bounds the actual request stream, validates field types/lengths and a fixed program list, rejects a filled honeypot, and checks Vercel BotID Basic before calling Resend. BotID is initialized in `instrumentation-client.ts` and proxied with `withBotId` in the Next config. Deep Analysis is not enabled. No client-supplied bypass or test-delivery endpoint exists.
+`POST /api/inquiry` requires same-origin JSON, bounds the actual request stream, validates field types/lengths and a fixed program list, rejects a filled honeypot, and checks Vercel BotID Basic before calling Resend. BotID is initialized in `instrumentation-client.ts` and proxied with `withBotId` in the Next config. Deep Analysis is not enabled. No client-supplied bypass or recipient override exists. Vercel Preview deployments always route submissions to Resend’s `delivered@resend.dev` simulator and display a preview notice and test-only confirmation; Production sends to the organization. This behavior uses Vercel’s server-only `VERCEL_ENV`, never a request parameter.
 
 A request ID survives retries until the form changes; the server adds a content hash to the Resend idempotency key, preventing duplicate sends of an unchanged request within Resend's 24-hour window. Pending submissions disable controls. Errors retain entered text and direct visitors to the email address. A successful response means Resend accepted the email, not that the team read it or that enrollment is confirmed. Delivery/bounce status remains available in Resend; no delivery webhook or automatic visitor receipt is implemented.
 
@@ -32,7 +32,7 @@ A request ID survives retries until the form changes; the server adds a content 
 
 `npm run test:unit` covers server validation, size limits, origin/content-type restrictions, bot checks, fixed recipients, plain-text messages, idempotency, and provider failures using injected dependencies. Browser tests use dummy server credentials and intercept inquiry requests and BotID challenges; they cannot deliver mail. The blank configuration checks the email-draft fallback; the configured one checks submission, pending state, errors, and retry behavior.
 
-For deployment checks, inspect the form and intercept submissions. Verify the sender in Resend, and use Resend's documented `delivered@resend.dev` simulator for transport tests if needed. Do not send real inquiries to the organization or families without explicit authorization. A simulator result is not proof of delivery into Google Workspace.
+For deployment checks, inspect the form, verify the sender in Resend, and exercise the Preview flow against its fixed simulator recipient. Production smoke checks must intercept submissions. Do not send real inquiries to the organization or families without explicit authorization. A simulator result is not proof of delivery into Google Workspace.
 
 ## Migration from the former checkout flow
 
