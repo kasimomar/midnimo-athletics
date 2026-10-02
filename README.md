@@ -128,7 +128,7 @@ Track each improvement with an issue, create a focused branch, and open a pull r
 ## Current limitations
 
 - Form confirmation means the sending provider accepted the inquiry, not confirmed mailbox delivery or enrollment. There is no delivery webhook or visitor auto-reply; sending is explicitly gated by deployment configuration.
-- News items are static placeholder updates. Content and schedules are maintained in code and should be kept current with the organization.
+- The News section directs families to the team when no announcements are posted. Publish dated news only after the organization confirms the content and date; program schedules are maintained in code.
 - Participation costs and availability are discussed directly with the team. Seeking grants does not mean funding is secured or all programs are free.
 
 ## Future improvements
@@ -137,5 +137,5 @@ Track each improvement with an issue, create a focused branch, and open a pull r
 2. Add family guidance, approved photography, and support/partnership information as the organization supplies and approves content.
 3. Test with screen-reader users and broaden manual accessibility review, including inquiry status and error announcements.
 4. Extend browser coverage with accessibility checks and additional browser engines.
-5. Replace placeholder news with maintained content, optimize hero media, and measure page performance.
+5. Add confirmed program announcements when available, optimize hero media, and measure page performance.
 6. Keep dependencies patched and remove unused starter components/documentation when appropriate.
