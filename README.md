@@ -14,6 +14,7 @@ A responsive website for Midnimo Athletics, a nonprofit welcoming all youth thro
 - A short introduction to Coach Osman, Founder, Head Coach & CEO, based on the organization's supplied roles and 20-plus years of community experience.
 - Canonical URLs and search/social descriptions reflect the nonprofit identity; share previews use the existing logo.
 - A nonprofit mission centered on a safe, welcoming place for all youth, including youth with autism already participating in the programs.
+- Family joining steps and FAQs explain how to inquire, discuss program details, and confirm enrollment with the team. An inquiry does not reserve a place; current costs and availability must be confirmed directly.
 - Program inquiries and contact at `admin@midnimoathletics.com`; the configured inquiry form sends through Resend, with validated fields, BotID Basic checks, retry protection, and an email-draft fallback when sending is disabled.
 - A gradient hero when video is unconfigured. Contact works independently of video settings; there is no online checkout or athlete-registration submission.
 
